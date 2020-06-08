@@ -1,0 +1,10 @@
+*
+!**/
+!*.py
+!*.md
+!*.svg
+!*.png
+!*.jpg
+!*.org
+!*.md
+!.gitignore

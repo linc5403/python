@@ -1,0 +1,664 @@
+* Build-in object preview
+
+| Object type                  | Example literals/creation                              |
+| Numbers                      | 1234, 3.1415, 3+4j, 0b111, Decimal(), Fraction()       |
+| Strings                      | 'spam', "Bob's", b'a\x01c', u'sp\xc4m'                 |
+| Lists                        | [1, [2, 'three'], 4.5], list(range(10))                |
+| Dictionaries                 | {'food': 'spam', 'taste': 'yum'}, dict(hours=10)       |
+| Tuples                       | (1, 'spam', 4, 'U'), tuple('spam'), namedtuple         |
+| Files                        | open('eggs.txt'), open(r'C:\ham.bin', 'wb')            |
+| Sets                         | set('abc'), {'a', 'b', 'c'}                            |
+| Other core types             | Booleans, types, None                                  |
+| Program unit types           | Functions, modules, classes (Part IV, Part V, Part VI) |
+| Implementation-related types | Compiled code, stack tracebacks (Part IV, Part VII)    |
+
+* Immutability
+
+ String都是不可变的, 无法改变其中的一个值, 只能构建一个新的字符串.
+
+ Every object in Python is classified as either immutable (unchangeable) or not. In terms of the core types, numbers, strings, and tuples are immutable; lists, dictionaries, and sets are not—they can be changed in place freely, as can most new objects you’ll code with classes. 
+  
+ Python中的对象要么是不可变的(numbers, strings, tuples)
+
+ 要么是可变的(lists, sets, dictionaries)
+
+  
+* TODO bytearray
+
+* 泛型操作和类型操作
+
+  - 泛型操作通常是函数调用, 如 ~len(x)~
+  - 类型操作通常是对象的方法调用, 如 ~s.upper()~
+
+
+* TODO Pattern Matching
+
+* List comprehension expression
+
+  - ~[row[1] for row in M]~
+  - ~[row[1] for row in M if row[1] % 2 != 0]~
+
+* Dictionaries
+
+* Iteration
+
+  In a nutshell, an object is iterable if it is either a physically stored sequence in memory, or an object that generates one item at a time in the context of an iteration operation—a sort of “virtual” sequence. More formally, both types of objects are considered iterable because they support the iteration protocol—they respond to the iter call with an object that advances in response to next calls and raises an exception when finished producing values.
+
+  支持迭代协议的对象都可以迭代-----iter() next()
+
+* Tuples
+
+  Functionally, they’re used to represent fixed collections of items: the components of a specific calendar date, for instance. Syntactically, they are normally coded in parentheses instead of square brackets, and they support arbitrary types, arbitrary nesting, and the usual sequence
+
+** Why Tuples?
+   
+   So, why have a type that is like a list, but supports fewer operations? Frankly, tuples are not generally used as often as lists in practice, but their immutability is the whole point. If you pass a collection of objects around your program as a list, it can be changed anywhere; if you use a tuple, it cannot. That is, tuples provide a sort of integrity constraint that is convenient in programs larger than those we’ll write here. We’ll talk more about tuples later in the book, including an extension that builds upon them called named tuples. For now, though, let’s jump ahead to our last major core type: the file.
+
+* Files
+
+* Numeric Types
+
+  - Integer and floating-point objects
+  - Complex number objects
+  - Decimal: fixed-precision objects
+  - Fraction: rational number objects
+  - Sets: collections with numeric operations
+  - Booleans: true and false
+  - Built-in functions and modules: round, math, random, etc.
+  - Expressions; unlimited integer precision; bitwise operations; hex, octal, and binary formats
+  - Third-party extensions: vectors, libraries, visualization, plotting, etc.
+
+** Numeric Literals
+
+*** Decimal Type
+    #+begin_example
+      In [5]: from decimal import Decimal
+
+      In [6]: Decimal(0.1)
+      Out[6]: Decimal('0.1000000000000000055511151231257827021181583404541015625')
+
+      In [7]: Decimal(0.1) + Decimal(0.1) + Decimal(0.1)
+      Out[7]: Decimal('0.3000000000000000166533453694')
+
+      In [8]: Decimal(0.1) + Decimal(0.1) + Decimal(0.1) - Decimal(0.3)
+      Out[8]: Decimal('2.775557561565156540423631668E-17')
+
+      In [9]: Decimal('0.1') + Decimal('0.1') + Decimal('0.1') - Decimal('0.3')
+      Out[9]: Decimal('0.0')
+    #+end_example
+
+    *可以用来表示经济, 钱*
+
+    #+begin_example
+      >>> 1999 + 1.33      # This has more digits in memory than displayed in 3.3
+      2000.33
+      >>>
+      >>> decimal.getcontext().prec = 2
+      >>> pay = decimal.Decimal(str(1999 + 1.33))
+      >>> pay
+      Decimal('2000.33')
+    #+end_example
+
+*** Fraction Type
+
+** IMMUTABLE CONSTRAINTS AND FROZEN SETS
+
+   Sets are powerful and flexible objects, but they do have one constraint in both 3.X and 2.X that you should keep in mind—largely because of their implementation, sets can only contain immutable (a.k.a. “hashable”) object types. Hence, lists and dictionaries cannot be embedded in sets, but tuples can if you need to store compound values. Tuples compare by their full values when used in set operations:
+
+   Sets中只能放不可变的(hashable)对象, 所以list和dict是不能放到里面的.而可以将Tuple放到Set中
+
+   #+begin_example
+     >>> S
+     {1.23}
+     >>> S.add([1, 2, 3])                   # Only immutable objects work in a set
+     TypeError: unhashable type: 'list'
+     >>> S.add({'a':1})
+     TypeError: unhashable type: 'dict'
+     >>> S.add((1, 2, 3))
+     >>> S                                  # No list or dict, but tuple OK
+     {1.23, (1, 2, 3)}
+
+     >>> S | {(4, 5, 6), (1, 2, 3)}         # Union: same as S.union(...)
+     {1.23, (4, 5, 6), (1, 2, 3)}
+     >>> (1, 2, 3) in S                     # Membership: by complete values
+     True
+     >>> (1, 4, 3) in S
+     False
+   #+end_example
+
+   Sets themselves are mutable too, and so cannot be nested in other sets directly; if you need to store a set inside another set, the frozenset built-in call works just like set but creates an immutable set that cannot change and thus can be embedded in other sets.
+
+   Sets自身是可变的, 因此也不能嵌套在其他Set中. 但是可以使用 ~frozenset()~ 方法将一个set对象固化
+
+   #+begin_example
+     In [12]: s = set()
+
+     In [13]: s.add(1)
+
+     In [14]: s.add(2)
+
+     In [15]: s
+     Out[15]: {1, 2}
+
+     In [16]: ss = frozenset(s)
+
+     In [17]: s.add(ss)
+
+     In [18]: s
+     Out[18]: {1, 2, frozenset({1, 2})}
+   #+end_example
+
+*** WHY SETS?
+    1. 过滤重复项
+
+       list->set->list
+
+       #+begin_example
+	 >>> L = [1, 2, 1, 3, 2, 4, 5]
+	 >>> set(L)
+	 {1, 2, 3, 4, 5}
+	 >>> L = list(set(L))                                  # Remove duplicates
+	 >>> L
+	 [1, 2, 3, 4, 5]
+
+	 >>> list(set(['yy', 'cc', 'aa', 'xx', 'dd', 'aa']))   # But order may change
+	 ['cc', 'xx', 'yy', 'dd', 'aa']
+       #+end_example
+
+    2. 比较list, string等其他可迭代对象的不同
+       
+       set1 - set2
+       
+       #+begin_example
+	 >>> set([1, 3, 5, 7]) - set([1, 2, 4, 5, 6])          # Find list differences
+	 {3, 7}
+	 >>> set('abcdefg') - set('abdghij')                   # Find string differences
+	 {'c', 'e', 'f'}
+	 >>> set('spam') - set(['h', 'a', 'm'])                # Find differences, mixed
+	 {'p', 's'}
+
+	 >>> set(dir(bytes)) - set(dir(bytearray))             # In bytes but not bytearray
+	 {'__getnewargs__'}
+	 >>> set(dir(bytearray)) - set(dir(bytes))
+	 {'append', 'copy', '__alloc__', '__imul__', 'remove', 'pop', 'insert', ...more...]
+       #+end_example
+
+    3. 只关心collection的内容, 不关心顺序的时候用来比较是否相同
+
+       #+begin_example
+	 >>> L1, L2 = [1, 3, 5, 2, 4], [2, 5, 3, 4, 1]
+]	 >>> L1 == L2                                          # Order matters in sequences
+	 False
+	 >>> set(L1) == set(L2)                                # Order-neutral equality
+	 True
+	 >>> sorted(L1) == sorted(L2)                          # Similar but results ordered
+	 True
+	 >>> 'spam' == 'asmp', set('spam') == set('asmp'), sorted('spam') == sorted('asmp')
+	 (False, True, True)
+       #+end_example
+
+    4. 遍历图或循环结构是用于记录是否已经处理过当前节点
+
+       Sets can also be used to keep track of where you’ve already been when traversing a graph or other cyclic structure. For example, the transitive module reloader and inheritance tree lister examples we’ll study in Chapter 25 and Chapter 31, respectively, must keep track of items visited to avoid loops, as Chapter 19 discusses in the abstract. Using a list in this context is inefficient because searches require linear scans. Although recording states visited as keys in a dictionary is efficient, sets offer an alternative that’s essentially equivalent (and may be more or less intuitive, depending on whom you ask).
+
+
+    5. 用来处理大的数据集时∩和∪特别有用
+       sets are also convenient when you’re dealing with large data sets (database query results, for example)—the intersection of two sets contains objects common to both categories, and the union contains all items in either set.
+
+       #+begin_example
+	 >>> engineers = {'bob', 'sue', 'ann', 'vic'}
+	 >>> managers  = {'tom', 'sue'}
+
+	 >>> 'bob' in engineers                   # Is bob an engineer?
+	 True
+
+	 >>> engineers & managers                 # Who is both engineer and manager?
+	 {'sue'}
+
+	 >>> engineers | managers                 # All people in either category
+	 {'bob', 'tom', 'sue', 'vic', 'ann'}
+
+	 >>> engineers - managers                 # Engineers who are not managers
+	 {'vic', 'ann', 'bob'}
+
+	 >>> managers - engineers                 # Managers who are not engineers
+	 {'tom'}
+
+	 >>> engineers > managers                 # Are all managers engineers? (superset)
+	 False
+
+	 >>> {'bob', 'sue'} < engineers           # Are both engineers? (subset)
+	 True
+
+	 >>> (managers | engineers) > managers    # All people is a superset of managers
+	 True
+
+	 >>> managers ^ engineers                 # Who is in one but not both?
+	 {'tom', 'vic', 'ann', 'bob'}
+
+	 >>> (managers | engineers) - (managers ^ engineers)     # Intersection!
+	 {'sue'}
+       #+end_example
+** Booleans
+   数值上是1和0, 但是是bool类的实例
+
+   #+begin_example
+     >>> type(True)
+     <class 'bool'>
+     >>> isinstance(True, int)
+     True
+     >>> True == 1                # Same value
+     True
+     >>> True is 1                # But a different object: see the next chapter
+     False
+     >>> True or False            # Same as: 1 or 0
+     True
+     >>> True + 4                 # (Hmmm)
+     5
+   #+end_example
+* Dynamic Type(动态类型)
+
+  [[file:./img/lp5e_0601.png]]
+  
+  变量和对象的关系:
+
+  Names (a.k.a. variables) and objects after running the assignment a = 3. Variable a becomes a reference to the object 3. Internally, the variable is really a pointer to the object’s memory space created by running the literal expression 3.
+
+  - Variables are entries in a system table, with spaces for links to objects.
+
+  - Objects are pieces of allocated memory, with enough space to represent the values for which they stand.
+    
+  - References are automatically followed pointers from variables to objects.
+
+  Technically speaking, objects have more structure than just enough space to represent their values. Each object also has two standard header fields: a type designator used to mark the type of the object, and a reference counter used to determine when it’s OK to reclaim the object. 
+
+  技术上说, 对象不仅仅只包含values的空间, 至少还包含两个额外的东西: 类型指示符和引用计数器.
+
+  *Types Live with Objects, Not Variables*
+
+  *Objects Are Garbage-Collected*
+** Shared References
+
+   #+begin_example
+     >>> a = 3
+     >>> b = a
+   #+end_example
+
+   [[file:./img/lp5e_0602.png]]
+
+   Names and objects after next running the assignment b = a. Variable b becomes a reference to the object 3. Internally, the variable is really a pointer to the object’s memory space created by running the literal expression 3.
+
+
+   [[file:./img/lp5e_0603.png]]
+
+    Names and objects after finally running the assignment a = ‘spam’. Variable a references the new object (i.e., piece of memory) created by running the literal expression ‘spam’, but variable b still refers to the original object 3. Because this assignment is not an in-place change to the object 3, it changes only variable a, not b.
+** Shared References and In-Place Changes
+   #+begin_src python
+     import copy
+     X = copy.copy(Y)          # Make top-level "shallow" copy of any object Y
+     X = copy.deepcopy(Y)      # Make deep copy of any object Y: copy all nested parts
+   #+end_src
+** Shared References and Equality
+   #+begin_src python
+     >>> L = [1, 2, 3]
+     >>> M = L                 # M and L reference the same object
+     >>> L == M                # Same values
+     True
+     >>> L is M                # Same objects
+     True
+   #+end_src
+
+   The first technique here, the *==* operator, tests whether the two referenced objects have the *same values*; this is the method almost always used for equality checks in Python. The second method, the is operator, instead tests for object identity—it returns True only if both names point to the exact same object, so it is a much stronger form of equality testing and is rarely applied in most programs.
+
+   Really, *is* simply compares the pointers that implement references, and it serves as a way to detect shared references in your code if needed. It returns False if the names point to equivalent but different objects, as is the case when we run two different literal expressions:
+
+   #+begin_src python
+     >>> L = [1, 2, 3]
+     >>> M = [1, 2, 3]         # M and L reference different objects
+     >>> L == M                # Same values
+     True
+     >>> L is M                # Different objects
+     False
+   #+end_src
+
+   #+begin_src python
+     >>> X = 42
+     >>> Y = 42                # Should be two different objects
+     >>> X == Y
+     True
+     >>> X is Y                # Same object anyhow: caching at work!
+     True
+   #+end_src
+
+   the ~getrefcount~ function in the standard sys module returns the object’s reference count. When I ask about the integer object 1 in the IDLE GUI, for instance, it reports 647 reuses of this same object (most of which are in IDLE’s system code, not mine, though this returns 173 outside IDLE so Python must be hoarding 1s as well):
+** Dynamic Typing Is Everywhere
+** “WEAK” REFERENCES
+   You may occasionally see the term “weak reference” in the Python world. This is a somewhat advanced tool, but is related to the reference model we’ve explored here, and like the ~is~ operator, can’t really be understood without it.
+
+   In short, a weak reference, implemented by the ~weakref~ standard library module, is a reference to an object that does not by itself prevent the referenced object from being garbage-collected. If the last remaining references to an object are weak references, the object is reclaimed and the weak references to it are automatically deleted (or otherwise notified).
+
+   This can be useful in dictionary-based caches of large objects, for example; otherwise, the cache’s reference alone would keep the object in memory indefinitely. Still, this is really just a special-case extension to the reference model. For more details, see Python’s library manual.
+* String Fundamentals
+  *string* — an ordered collection of characters used to store and represent text- and bytes-based information. 
+** Unicode: The Short Story
+   In Python 3.X there are three string types: str is used for Unicode text (including ASCII), bytes is used for binary data (including encoded text), and bytearray is a mutable variant of bytes. Files work in two modes: text, which represents content as str and implements Unicode encodings, and binary, which deals in raw bytes and does no data translation.
+
+   In fact, the primary distinction of Unicode often lies in the translation (a.k.a. encoding) step required to move it to and from files. Beyond that, it’s largely just string processing.
+
+   Unicode主要在读取和写入文件的时候才需要考虑. 其他时候用String就可以了.
+** String Basics
+   Python’s strings serve the same role as character arrays in languages such as C, but they are a somewhat higher-level tool than arrays. Unlike in C, in Python, strings come with a powerful set of processing tools. Also unlike languages such as C, Python *has no distinct type for individual characters*; instead, you just use *one-character strings*
+
+   Strictly speaking, Python strings are categorized as immutable sequences, meaning that the characters they contain have a left-to-right positional order and that they cannot be changed in place. In fact, strings are the first representative of the larger class of objects called sequences that we will study here. 
+
+   严格的说, Strings属于不可变序列. 
+
+** String Literals
+   
+*** Single- and Double-Quoted Strings Are the Same
+
+*** Escape Sequences Represent Special Characters
+    The character ~\~, and one or more characters following it in the string literal, are replaced with a single character in the resulting string object, which has the binary value specified by the escape sequence. 
+    
+    3.X defines str strings formally as sequences of *Unicode code points*, not bytes, to make this clear.
+
+    | Escape    | Meaning                                         |
+    | \newline  | Ignored (continuation line)                     |
+    | \\        | Backslash (stores one \)                        |
+    | \'        | Single quote (stores ')                         |
+    | \"        | Double quote (stores ")                         |
+    | \a        | Bell                                            |
+    | \b        | Backspace                                       |
+    | \f        | Formfeed                                        |
+    | \n        | Newline (linefeed)                              |
+    | \r        | Carriage return                                 |
+    | \t        | Horizontal tab                                  |
+    | \v        | Vertical tab                                    |
+    | \xhh      | Character with hex value hh (exactly 2 digits)  |
+    | \ooo      | Character with octal value ooo (up to 3 digits) |
+    | \0        | Null: binary 0 character (doesn’t end string)   |
+    | \N{ id }  | Unicode database ID                             |
+    | \uhhhh    | Unicode character with 16-bit hex value         |
+    | \Uhhhhhhh | Unicode character with 32-bit hex valuea        |
+    | \other    | Not an escape (keeps both \ and other)          |
+
+    #+begin_src python
+      >>> s = 'a\0b\0c'
+      >>> s
+      'a\x00b\x00c'
+      >>> len(s)
+      5
+    #+end_src
+
+    In Python, a zero (null) character like this does not terminate a string the way a “null byte” typically does in C. Instead, Python keeps both the string’s length and text in memory. In fact, no character terminates a string in Python. Here’s a string that is all absolute binary escape codes—a binary 1 and 2 (coded in octal), followed by a binary 3 (coded in hexadecimal):
+    #+begin_src python
+      >>> s = '\001\002\x03'
+      >>> s
+      '\x01\x02\x03'
+      >>> len(s)
+      3
+    #+end_src
+
+*** Raw Strings Suppress Escapes
+
+    #+begin_src python
+      >>> path = r'C:\new\text.dat'
+      >>> path                          # Show as Python code
+      'C:\\new\\text.dat'
+      >>> print(path)                   # User-friendly format
+      C:\new\text.dat
+      >>> len(path)                     # String length
+      15
+    #+end_src
+
+    即使是Raw Strings也不能以 ~\~ 结束
+    #+begin_src python
+      In [32]: path = r'C:\new\text.dat\'
+	File "<ipython-input-32-7d67db395ae9>", line 1
+	  path = r'C:\new\text.dat\'
+				    ^
+      SyntaxError: EOL while scanning string literal
+    #+end_src
+    
+    如果必须要以 ~\~ 结束, 那么有几个办法:
+    
+    1. truncate
+       #+begin_src python
+	 In [35]: path = r'C:\new\text.dat\\'[:-1]
+       #+end_src
+
+    2. join
+       #+begin_src python
+	 In [38]: path = r'C:\new\text.dat' + '\\'
+
+	 In [39]: print(path)
+	 C:\new\text.dat\
+       #+end_src
+
+    3. 不要使用r'...'
+
+*** Triple Quotes Code Multiline Block Strings
+    
+** Strings in Action
+   
+*** Basic Operations
+
+    - ~+~
+    - ~*~
+    - ~len()~
+    - ~for c in s:~
+
+*** Indexing and Slicing
+    
+    [[file:./img/lp5e_0701.png]]
+
+    Offsets and slices: positive offsets start from the left end (offset 0 is the first item), and negatives count back from the right end (offset −1 is the last item). Either kind of offset can be used to give positions in indexing and slicing operations.
+
+    到end但是不包含end:
+    
+    #+begin_src python
+      In [44]: S = 'spam'
+
+      In [45]: S[-1]
+      Out[45]: 'm'
+
+      In [47]: S[:-1]
+      Out[47]: 'spa'
+
+      In [48]: S[:2]
+      Out[48]: 'sp'
+    #+end_src
+
+**** EXTENDED SLICING: THE THIRD LIMIT AND SLICE OBJECTS
+     #+begin_src python
+       >>> S = 'hello'
+       >>> S[::−1]                            # Reversing items
+       'olleh'
+     #+end_src
+
+     #+begin_src python
+       >>> S = 'abcedfg'
+       >>> S[5:1:−1]                          # Bounds roles differ
+       'fdec'
+     #+end_src
+
+     #+begin_src python
+       >>> 'spam'[1:3]                        # Slicing syntax
+       'pa'
+       >>> 'spam'[slice(1, 3)]                # Slice objects with index syntax + object
+       'pa'
+       >>> 'spam'[::-1]
+       'maps'
+       >>> 'spam'[slice(None, None, −1)]
+       'maps'
+     #+end_src
+     
+     
+***** WHY YOU WILL CARE: SLICES
+      #+begin_src python
+	# File echo.py
+	import sys
+	print(sys.argv)
+
+	% python echo.py −a −b −c
+	['echo.py', '−a', '−b', '−c']
+      #+end_src
+
+      a single slice expression can be used to return all but the first item of a list. Here, ~sys.argv[1:]~ returns the desired list, ['−a', '−b', '−c']. You can then process this list without having to accommodate the program name at the front.
+      
+      
+*** String Conversion Tools
+    #+begin_src python
+      >>> int("42"), str(42)          # Convert from/to string
+      (42, '42')
+      >>> repr(42)                    # Convert to as-code string
+      '42'
+    #+end_src
+    The int function converts a string to a number, and the str function converts a number to its string representation (essentially, what it looks like when printed). The repr function (and the older backquotes expression, removed in Python 3.X) also converts an object to its string representation, but returns the object as a string of code that can be rerun to recreate the object.
+
+**** CHARACTER CODE CONVERSIONS
+     #+begin_src python
+       >>> S = '5'
+       >>> S = chr(ord(S) + 1)
+       >>> S
+       '6'
+       >>> S = chr(ord(S) + 1)
+       >>> S
+       '7'
+     #+end_src
+
+     #+begin_src python
+       >>> B = '1101'                 # Convert binary digits to integer with ord
+       >>> I = 0
+       >>> while B != '':
+       ...     I = I * 2 + (ord(B[0]) - ord('0'))
+       ...     B = B[1:]
+       ...
+       >>> I
+       13
+     #+end_src
+
+     #+begin_src python
+       >>> int('1101', 2)             # Convert binary to integer: built-in
+       13
+       >>> bin(13)                    # Convert integer to binary: built-in
+       '0b1101'
+     #+end_src
+
+     #+begin_src python
+       >>> 'That is %d %s bird!' % (1, 'dead')           # Format expression: all Pythons
+       That is 1 dead bird!
+       >>> 'That is {0} {1} bird!'.format(1, 'dead')     # Format method in 2.6, 2.7, 3.X
+       'That is 1 dead bird!'
+     #+end_src
+
+     
+** String Methods
+   
+*** Methods of Strings
+
+    Table 7-3. String method calls in Python 3.3
+    | S.capitalize()                       | S.ljust(width [, fill])                |
+    | S.casefold()                         | S.lower()                              |
+    | S.center(width [, fill])             | S.lstrip([chars])                      |
+    | S.count(sub [, start [, end]])       | S.maketrans(x[, y[, z]])               |
+    | S.encode([encoding [,errors]])       | S.partition(sep)                       |
+    | S.endswith(suffix [, start [, end]]) | S.replace(old, new [, count])          |
+    | S.expandtabs([tabsize])              | S.rfind(sub [,start [,end]])           |
+    | S.find(sub [, start [, end]])        | S.rindex(sub [, start [, end]])        |
+    | S.format(fmtstr, *args, **kwargs)    | S.rjust(width [, fill])                |
+    | S.index(sub [, start [, end]])       | S.rpartition(sep)                      |
+    | S.isalnum()                          | S.rsplit([sep[, maxsplit]])            |
+    | S.isalpha()                          | S.rstrip([chars])                      |
+    | S.isdecimal()                        | S.split([sep [,maxsplit]])             |
+    | S.isdigit()                          | S.splitlines([keepends])               |
+    | S.isidentifier()                     | S.startswith(prefix [, start [, end]]) |
+    | S.islower()                          | S.strip([chars])                       |
+    | S.isnumeric()                        | S.swapcase()                           |
+    | S.isprintable()                      | S.title()                              |
+    | S.isspace()                          | S.translate(map)                       |
+    | S.istitle()                          | S.upper()                              |
+    | S.isupper()                          | S.zfill(width)                         |
+    | S.join(iterable)                     |                                        |
+
+*** String Method Examples: Changing Strings II
+    
+    #+begin_src python
+      >>> S = 'xxxxSPAMxxxxSPAMxxxx'
+      >>> S.replace('SPAM', 'EGGS')         # Replace all
+      'xxxxEGGSxxxxEGGSxxxx'
+
+      >>> S.replace('SPAM', 'EGGS', 1)      # Replace one
+      'xxxxEGGSxxxxSPAMxxxx'
+    #+end_src
+
+    #+begin_src python
+      >>> line = 'bob,hacker,40'
+      >>> line.split(',')
+      ['bob', 'hacker', '40']
+    #+end_src
+
+    #+begin_src python
+      >>> line = "i'mSPAMaSPAMlumberjack"
+      >>> line.split("SPAM")
+      ["i'm", 'a', 'lumberjack']
+    #+end_src
+
+** String Formatting Expressions
+   #+begin_src python
+     >>> template = '{0}, {1} and {2}'                             # By position
+     >>> template.format('spam', 'ham', 'eggs')
+     'spam, ham and eggs'
+
+     >>> template = '{motto}, {pork} and {food}'                   # By keyword
+     >>> template.format(motto='spam', pork='ham', food='eggs')
+     'spam, ham and eggs'
+
+     >>> template = '{motto}, {0} and {food}'                      # By both
+     >>> template.format('ham', motto='spam', food='eggs')
+     'spam, ham and eggs'
+
+     >>> template = '{}, {} and {}'                                # By relative position
+     >>> template.format('spam', 'ham', 'eggs')                    # New in 3.1 and 2.7
+     'spam, ham and eggs'
+   #+end_src
+
+*** Adding Keys, Attributes, and Offsets
+
+    #+begin_src python
+      >>> import sys
+
+      >>> 'My {1[kind]} runs {0.platform}'.format(sys, {'kind': 'laptop'})
+      'My laptop runs win32'
+
+      >>> 'My {map[kind]} runs {sys.platform}'.format(sys=sys, map={'kind': 'laptop'})
+      'My laptop runs win32'
+    #+end_src
+
+** General Type Categories
+   - Numbers (integer, floating-point, decimal, fraction, others)
+     
+     Support addition, multiplication, etc.
+
+   - Sequences (strings, lists, tuples)
+
+     Support indexing, slicing, concatenation, etc.
+     
+   - Mappings (dictionaries)
+
+     Support indexing by key, etc.
+
+
+     
+
+*** Mutable Types Can Be Changed in Place
+
+    - Immutables (numbers, strings, tuples, frozensets)
+
+      None of the object types in the immutable category support in-place changes, though we can always run expressions to make new objects and assign their results to variables as needed.
+      
+    - Mutables (lists, dictionaries, sets, bytearray)
+
+      Conversely, the mutable types can always be changed in place with operations that do not create new objects. Although such objects can be copied, in-place changes support direct modification.
+
+* Lists and Dictionaries
