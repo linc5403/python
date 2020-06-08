@@ -662,3 +662,368 @@
       Conversely, the mutable types can always be changed in place with operations that do not create new objects. Although such objects can be copied, in-place changes support direct modification.
 
 * Lists and Dictionaries
+
+* Tuples, Files, and Everything Else
+
+** Tuples
+   - Ordered collections of arbitrary objects
+
+     Like strings and lists, tuples are positionally ordered collections of objects (i.e., they maintain a left-to-right order among their contents); like lists, they can embed any kind of object.
+
+   - Accessed by offset
+     
+     Like strings and lists, items in a tuple are accessed by offset (not by key); they support all the offset-based access operations, such as indexing and slicing.
+
+   - Of the category “immutable sequence”
+
+     Like strings and lists, tuples are sequences; they support many of the same operations. However, like strings, tuples are immutable; they don’t support any of the in-place change operations applied to lists.
+
+   - Fixed-length, heterogeneous, and arbitrarily nestable
+
+     Because tuples are immutable, you cannot change the size of a tuple without making a copy. On the other hand, tuples can hold any type of object, including other compound objects (e.g., lists, dictionaries, other tuples), and so support arbitrary nesting.
+
+   - Arrays of object references
+
+     Like lists, tuples are best thought of as object reference arrays; tuples store access points to other objects (references), and indexing a tuple is relatively quick.
+
+*** Tuples in Action
+    #+begin_src python
+      >>> (1, 2) + (3, 4)            # Concatenation
+      (1, 2, 3, 4)
+
+      >>> (1, 2) * 4                 # Repetition
+      (1, 2, 1, 2, 1, 2, 1, 2)
+
+      >>> T = (1, 2, 3, 4)           # Indexing, slicing
+      >>> T[0], T[1:3]
+      (1, (2, 3))
+    #+end_src
+
+    
+**** TUPLE SYNTAX PECULIARITIES: COMMAS AND PARENTHESES
+     #+begin_src python
+       >>> x = (40)                   # An integer!
+       >>> x
+       40
+       >>> y = (40,)                  # A tuple containing an integer
+       >>> y
+       (40,)
+     #+end_src
+
+**** CONVERSIONS, METHODS, AND IMMUTABILITY
+     #+begin_src python
+       >>> T = ('cc', 'aa', 'dd', 'bb')
+       >>> tmp = list(T)                  # Make a list from a tuple's items
+       >>> tmp.sort()                     # Sort the list
+       >>> tmp
+       ['aa', 'bb', 'cc', 'dd']
+       >>> T = tuple(tmp)                 # Make a tuple from the list's items
+       >>> T
+       ('aa', 'bb', 'cc', 'dd')
+
+       >>> sorted(T)                      # Or use the sorted built-in, and save two steps
+       ['aa', 'bb', 'cc', 'dd']
+     #+end_src
+     
+     #+begin_src python
+       >>> T = (1, 2, 3, 2, 4, 2)         # Tuple methods in 2.6, 3.0, and later
+       >>> T.index(2)                     # Offset of first appearance of 2
+       1
+       >>> T.index(2, 2)                  # Offset of appearance after offset 2
+       3
+       >>> T.count(2)                     # How many 2s are there?
+       3
+     #+end_src
+
+     #+begin_src python
+       >>> T = (1, [2, 3], 4)
+       >>> T[1] = 'spam'                  # This fails: can't change tuple itself
+       TypeError: object doesn't support item assignment
+
+       >>> T[1][0] = 'spam'               # This works: can change mutables inside
+       >>> T
+       (1, ['spam', 3], 4)
+     #+end_src
+
+*** Why Lists and Tuples?
+    Tuples can also be used in places that lists cannot—for example, as dictionary keys (see the sparse matrix example in Chapter 8). Some built-in operations may also require or imply tuples instead of lists (e.g., the substitution values in a string format expression), though such operations have often been generalized in recent years to be more flexible. As a rule of thumb, lists are the tool of choice for ordered collections that might need to change; tuples can handle the other cases of fixed associations.
+
+*** Records Revisited: Named Tuples
+    #+begin_src python
+      >>> from collections import namedtuple                     # Import extension type
+      >>> Rec = namedtuple('Rec', ['name', 'age', 'jobs'])       # Make a generated class
+      >>> bob = Rec('Bob', age=40.5, jobs=['dev', 'mgr'])        # A named-tuple record
+      >>> bob
+      Rec(name='Bob', age=40.5, jobs=['dev', 'mgr'])
+
+      >>> bob[0], bob[2]                                         # Access by position
+      ('Bob', ['dev', 'mgr'])
+      >>> bob.name, bob.jobs                                     # Access by attribute
+      ('Bob', ['dev', 'mgr'])
+    #+end_src
+    
+    Converting to a dictionary supports key-based behavior when needed:
+
+    #+begin_src python
+      >>> O = bob._asdict()                                      # Dictionary-like form
+      >>> O['name'], O['jobs']                                   # Access by key too
+      ('Bob', ['dev', 'mgr'])
+      >>> O
+      OrderedDict([('name', 'Bob'), ('age', 40.5), ('jobs', ['dev', 'mgr'])])
+    #+end_src
+
+     named tuples are a tuple/class/dictionary hybrid. 
+
+     #+begin_src python
+       >>> bob = Rec('Bob', 40.5, ['dev', 'mgr'])    # For both tuples and named tuples
+       >>> name, age, jobs = bob                     # Tuple assignment (Chapter 11)
+       >>> name, jobs
+       ('Bob', ['dev', 'mgr'])
+
+       >>> for x in bob: print(x)                    # Iteration context (Chapters 14, 20)
+       ...prints Bob, 40.5, ['dev', 'mgr']...
+     #+end_src
+
+     #+begin_src python
+       >>> bob = {'name': 'Bob', 'age': 40.5, 'jobs': ['dev', 'mgr']}
+       >>> job, name, age = bob.values()
+       >>> name, job                                 # Dict equivalent (but order may vary)
+       ('Bob', ['dev', 'mgr'])
+
+       >>> for x in bob: print(bob[x])               # Step though keys, index values
+       ...prints values...
+       >>> for x in bob.values(): print(x)           # Step through values view
+       ...prints values...
+     #+end_src
+
+** Files
+
+   | Operation                             | Interpretation                                        |
+   | output = open(r'C:\spam', 'w')        | Create output file ('w' means write)                  |
+   | input = open('data', 'r')             | Create input file ('r' means read)                    |
+   | input = open('data')                  | Same as prior line ('r' is the default)               |
+   | aString = input.read()                | Read entire file into a single string                 |
+   | aString = input.read(N)               | Read up to next N characters (or bytes) into a string |
+   | aString = input.readline()            | Read next line (including \n newline) into a string   |
+   | aList = input.readlines()             | Read entire file into list of line strings (with \n)  |
+   | output.write(aString)                 | Write a string of characters (or bytes) into file     |
+   | output.writelines(aList)              | Write all line strings in a list into file            |
+   | output.close()                        | Manual close (done for you when file is collected)    |
+   | output.flush()                        | Flush output buffer to disk without closing           |
+   | anyFile.seek(N)                       | Change file position to offset N for next operation   |
+   | for line in open('data'): use line    | File iterators read line by line                      |
+   | open('f.txt', encoding='latin-1')     | Python 3.X Unicode text files (str strings)           |
+   | open('f.bin', 'rb')                   | Python 3.X bytes files (bytes strings)                |
+   | codecs.open('f.txt', encoding='utf8') | Python 2.X Unicode text files (unicode strings)       |
+   | open('f.bin', 'rb')                   | Python 2.X bytes files (str strings)                  |
+
+*** Opening Files
+    #+begin_src python
+      afile = open(filename, mode)
+      afile.method()
+    #+end_src
+    
+    The second argument to open, processing mode, is typically the string 'r' to open for text input (the default), 'w' to create and open for text output, or 'a' to open for appending text to the end (e.g., for adding to logfiles). The processing mode argument can specify additional options:
+
+    Adding a b to the mode string allows for binary data (end-of-line translations and 3.X Unicode encodings are turned off).
+
+    Adding a + opens the file for both input and output (i.e., you can both read and write to the same file object, often in conjunction with seek operations to reposition in the file).
+
+*** Files in Action
+
+    #+begin_src python
+      >>> myfile = open('myfile.txt', 'w')        # Open for text output: create/empty
+      >>> myfile.write('hello text file\n')       # Write a line of text: string
+      16
+      >>> myfile.write('goodbye text file\n')
+      18
+      >>> myfile.close()                          # Flush output buffers to disk
+
+      >>> myfile = open('myfile.txt')             # Open for text input: 'r' is default
+      >>> myfile.readline()                       # Read the lines back
+      'hello text file\n'
+      >>> myfile.readline()
+      'goodbye text file\n'
+      >>> myfile.readline()                       # Empty string: end-of-file
+      ''
+    #+end_src
+
+    #+begin_src python
+      >>> open('myfile.txt').read()               # Read all at once into string
+      'hello text file\ngoodbye text file\n'
+
+      >>> print(open('myfile.txt').read())        # User-friendly display
+      hello text file
+      goodbye text file
+    #+end_src
+
+    #+begin_src python
+      >>> for line in open('myfile.txt'):         # Use file iterators, not reads
+      ...     print(line, end='')
+      ...
+      hello text file
+      goodbye text file
+    #+end_src
+
+*** Storing Native Python Objects: pickle
+    The pickle module is a more advanced tool that allows us to store almost any Python object in a file directly, with no to- or from-string conversion requirement on our part. It’s like a super-general data formatting and parsing utility. To store a dictionary in a file, for instance, we pickle it directly:
+    #+begin_src python
+      >>> D = {'a': 1, 'b': 2}
+      >>> F = open('datafile.pkl', 'wb')
+      >>> import pickle
+      >>> pickle.dump(D, F)                          # Pickle any object to file
+      >>> F.close()
+    #+end_src
+
+    Then, to get the dictionary back later, we simply use pickle again to re-create it:
+    #+begin_src python
+      >>> F = open('datafile.pkl', 'rb')
+      >>> E = pickle.load(F)                         # Load any object from file
+      >>> E
+      {'a': 1, 'b': 2}
+    #+end_src
+
+*** Storing Python Objects in JSON Format
+    #+begin_src python
+      >>> name = dict(first='Bob', last='Smith')
+      >>> rec  = dict(name=name, job=['dev', 'mgr'], age=40.5)
+      >>> rec
+      {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+    #+end_src
+    The final dictionary format displayed here is a valid literal in Python code, and almost passes for JSON when printed as is, but the json module makes the translation official—here translating Python objects to and from a JSON serialized string representation in memory:
+    #+begin_src python
+      >>> import json
+      >>> json.dumps(rec)
+      '{"job": ["dev", "mgr"], "name": {"last": "Smith", "first": "Bob"}, "age": 40.5}'
+
+      >>> S = json.dumps(rec)
+      >>> S
+      '{"job": ["dev", "mgr"], "name": {"last": "Smith", "first": "Bob"}, "age": 40.5}'
+
+      >>> O = json.loads(S)
+      >>> O
+      {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+      >>> O == rec
+      True
+    #+end_src
+
+    It’s similarly straightforward to translate Python objects to and from JSON data strings in files. Prior to being stored in a file, your data is simply Python objects; the JSON module recreates them from the JSON textual representation when it loads it from the file:
+    #+begin_src python
+      >>> json.dump(rec, fp=open('testjson.txt', 'w'), indent=4)
+      >>> print(open('testjson.txt').read())
+      {
+	  "job": [
+	      "dev",
+	      "mgr"
+	  ],
+	  "name": {
+	      "last": "Smith",
+	      "first": "Bob"
+	  },
+	  "age": 40.5
+      }
+      >>> P = json.load(open('testjson.txt'))
+      >>> P
+      {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+    #+end_src
+
+*** CVS
+    #+begin_src python
+      >>> import csv
+      >>> rdr = csv.reader(open('csvdata.txt'))
+      >>> for row in rdr: print(row)
+      ...
+      ['a', 'bbb', 'cc', 'dddd']
+      ['11', '22', '33', '44']
+    #+end_src
+
+*** Storing Packed Binary Data: struct
+    We saw an overview of this tool in Chapter 4, but let’s take another quick look here for more perspective. To create a packed binary data file, open it in 'wb' (write binary) mode, and pass struct a format string and some Python objects. The format string used here means pack as a 4-byte integer, a 4-character string (which must be a bytes string as of Python 3.2), and a 2-byte integer, all in big-endian form (other format codes handle padding bytes, floating-point numbers, and more):
+    #+begin_src python
+      >>> F = open('data.bin', 'wb')                     # Open binary output file
+      >>> import struct
+      >>> data = struct.pack('>i4sh', 7, b'spam', 8)     # Make packed binary data
+      >>> data
+      b'\x00\x00\x00\x07spam\x00\x08'
+      >>> F.write(data)                                  # Write byte string
+      >>> F.close()
+    #+end_src
+
+    Python creates a binary bytes data string, which we write out to the file normally—this one consists mostly of nonprintable characters printed in hexadecimal escapes, and is the same binary file we met earlier. To parse the values out to normal Python objects, we simply read the string back and unpack it using the same format string. Python extracts the values into normal Python objects—integers and a string:
+    #+begin_src python
+      >>> F = open('data.bin', 'rb')
+      >>> data = F.read()                                # Get packed binary data
+      >>> data
+      b'\x00\x00\x00\x07spam\x00\x08'
+      >>> values = struct.unpack('>i4sh', data)          # Convert to Python objects
+      >>> values
+      (7, b'spam', 8)
+    #+end_src
+
+    
+   
+*** File Context Managers
+
+    #+begin_src python
+      with open(r'C:\code\data.txt') as myfile:     # See Chapter 34 for details
+	  for line in myfile:
+	      ...use line here...
+    #+end_src
+
+** Core Types Review and Summary
+
+   - Objects share operations according to their category; for instance, sequence objects—strings, lists, and tuples—all share sequence operations such as concatenation, length, and indexing.
+
+   - Only mutable objects—lists, dictionaries, and sets—may be changed in place; you cannot change numbers, strings, or tuples in place.
+
+   - Files export only methods, so mutability doesn’t really apply to them—their state may be changed when they are processed, but this isn’t quite the same as Python core type mutability constraints.
+
+   - “Numbers” in Table 9-3 includes all number types: integer (and the distinct long integer in 2.X), floating point, complex, decimal, and fraction.
+
+   - “Strings” in Table 9-3 includes str, as well as bytes in 3.X and unicode in 2.X; the bytearray string type in 3.X, 2.6, and 2.7 is mutable.
+
+   - Sets are something like the keys of a valueless dictionary, but they don’t map to values and are not ordered, so sets are neither a mapping nor a sequence type; frozenset is an immutable variant of set.
+
+   - In addition to type category operations, as of Python 2.6 and 3.0 all the types in Table 9-3 have callable methods, which are generally specific to their type.
+
+   Table 9-3. Object classifications
+   
+   | Object type   | Category  | Mutable? |
+   | Numbers (all) | Numeric   | No       |
+   | Strings (all) | Sequence  | No       |
+   | Lists         | Sequence  | Yes      |
+   | Dictionaries  | Mapping   | Yes      |
+   | Tuples        | Sequence  | No       |
+   | Files         | Extension | N/A      |
+   | Sets          | Set       | Yes      |
+   | Frozenset     | Set       | No       |
+   | bytearray     | Sequence  | Yes      |
+
+*** Object Flexibility
+
+    This part of the book introduced a number of compound object types—collections with components. In general:
+    
+    - Lists, dictionaries, and tuples can hold any kind of object.
+      
+      #+begin_src python
+	In [71]: b = ([1,2], 3, 4)
+
+	In [72]: b
+	Out[72]: ([1, 2], 3, 4)
+      #+end_src
+
+    - Sets can contain any type of immutable object.
+
+      #+begin_src python
+	In [68]: a.add([1, 2])
+	---------------------------------------------------------------------------
+	TypeError                                 Traceback (most recent call last)
+	<ipython-input-68-e2fb23224f38> in <module>
+	----> 1 a.add([1, 2])
+
+	TypeError: unhashable type: 'list'
+      #+end_src
+
+    - Lists, dictionaries, and tuples can be arbitrarily nested.
+
+    - Lists, dictionaries, and sets can dynamically grow and shrink.

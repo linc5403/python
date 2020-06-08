@@ -1,53 +1,68 @@
 
 # Table of Contents
 
-1.  [Build-in object preview](#orgb22cb5b)
-2.  [Immutability](#org14b55fc)
-3.  [bytearray](#org87f4b43)
-4.  [泛型操作和类型操作](#org9dcc1c4)
-5.  [Pattern Matching](#orgc9dc4fb)
-6.  [List comprehension expression](#orge05f49a)
-7.  [Dictionaries](#org85f9861)
-8.  [Iteration](#orgb8e840e)
-9.  [Tuples](#orgfaa2da3)
-    1.  [Why Tuples?](#orgac750a0)
-10. [Files](#orgebad954)
-11. [Numeric Types](#org05fcad6)
-    1.  [Numeric Literals](#org16e110d)
-        1.  [Decimal Type](#org09f5d29)
-        2.  [Fraction Type](#org292b089)
-    2.  [IMMUTABLE CONSTRAINTS AND FROZEN SETS](#org69075da)
-        1.  [WHY SETS?](#org2a6aed2)
-    3.  [Booleans](#org4860be9)
-12. [Dynamic Type(动态类型)](#org1f85bea)
-    1.  [Shared References](#org62028b1)
-    2.  [Shared References and In-Place Changes](#org8ff4066)
-    3.  [Shared References and Equality](#orgc35c749)
-    4.  [Dynamic Typing Is Everywhere](#org05e686a)
-    5.  [“WEAK” REFERENCES](#orgca947cd)
-13. [String Fundamentals](#org1e795a5)
-    1.  [Unicode: The Short Story](#orgc9b9866)
-    2.  [String Basics](#org7062515)
-    3.  [String Literals](#org6082f4d)
-        1.  [Single- and Double-Quoted Strings Are the Same](#org636f342)
-        2.  [Escape Sequences Represent Special Characters](#org9555f3a)
-        3.  [Raw Strings Suppress Escapes](#org16aba31)
-        4.  [Triple Quotes Code Multiline Block Strings](#org139ea34)
-    4.  [Strings in Action](#org421388b)
-        1.  [Basic Operations](#orgf30c467)
-        2.  [Indexing and Slicing](#org56457cd)
-        3.  [String Conversion Tools](#org7332ade)
-    5.  [String Methods](#orgd913fa9)
-        1.  [Methods of Strings](#orgb11c87c)
-        2.  [String Method Examples: Changing Strings II](#org3440da6)
-    6.  [String Formatting Expressions](#org76c69ec)
-        1.  [Adding Keys, Attributes, and Offsets](#org5ea8553)
-    7.  [General Type Categories](#org2a11577)
-        1.  [Mutable Types Can Be Changed in Place](#org586852d)
-14. [Lists and Dictionaries](#org0f5fa61)
+1.  [Build-in object preview](#org673b23f)
+2.  [Immutability](#org632ea68)
+3.  [bytearray](#org71cc254)
+4.  [泛型操作和类型操作](#org5b59adb)
+5.  [Pattern Matching](#orgb5d2c8d)
+6.  [List comprehension expression](#org006e4f6)
+7.  [Dictionaries](#orgfc571a1)
+8.  [Iteration](#orga299bf8)
+9.  [Tuples](#org812e02a)
+    1.  [Why Tuples?](#org333797b)
+10. [Files](#org3492c82)
+11. [Numeric Types](#org3b71c35)
+    1.  [Numeric Literals](#org5a954d6)
+        1.  [Decimal Type](#orgb5395b0)
+        2.  [Fraction Type](#orgffc5df1)
+    2.  [IMMUTABLE CONSTRAINTS AND FROZEN SETS](#org68e0150)
+        1.  [WHY SETS?](#org463c51d)
+    3.  [Booleans](#org57a472e)
+12. [Dynamic Type(动态类型)](#orgca6b9a0)
+    1.  [Shared References](#org6661e02)
+    2.  [Shared References and In-Place Changes](#orgf16dc00)
+    3.  [Shared References and Equality](#orgc14f318)
+    4.  [Dynamic Typing Is Everywhere](#orge2fe27d)
+    5.  [“WEAK” REFERENCES](#org9a0201b)
+13. [String Fundamentals](#orgf2ff156)
+    1.  [Unicode: The Short Story](#orgfdb1073)
+    2.  [String Basics](#orgc24589c)
+    3.  [String Literals](#orga8c1fa0)
+        1.  [Single- and Double-Quoted Strings Are the Same](#org1bba768)
+        2.  [Escape Sequences Represent Special Characters](#org2afd9fd)
+        3.  [Raw Strings Suppress Escapes](#org2ee008f)
+        4.  [Triple Quotes Code Multiline Block Strings](#org55836ca)
+    4.  [Strings in Action](#org057b91c)
+        1.  [Basic Operations](#orgd181895)
+        2.  [Indexing and Slicing](#orgcf68542)
+        3.  [String Conversion Tools](#org6c45917)
+    5.  [String Methods](#org290aea5)
+        1.  [Methods of Strings](#orgb64f5cb)
+        2.  [String Method Examples: Changing Strings II](#org5dcdc64)
+    6.  [String Formatting Expressions](#orgd879d8f)
+        1.  [Adding Keys, Attributes, and Offsets](#orgd0cc6b6)
+    7.  [General Type Categories](#org96ff891)
+        1.  [Mutable Types Can Be Changed in Place](#org27ebf59)
+14. [Lists and Dictionaries](#org7f5b1be)
+15. [Tuples, Files, and Everything Else](#org3e38bf1)
+    1.  [Tuples](#org8c4a3df)
+        1.  [Tuples in Action](#org8def3ef)
+        2.  [Why Lists and Tuples?](#org2519762)
+        3.  [Records Revisited: Named Tuples](#orgbb30579)
+    2.  [Files](#org67a43dc)
+        1.  [Opening Files](#orgd1ca47f)
+        2.  [Files in Action](#org52e0cfe)
+        3.  [Storing Native Python Objects: pickle](#org959ab36)
+        4.  [Storing Python Objects in JSON Format](#org0b9415e)
+        5.  [CVS](#org50a7eea)
+        6.  [Storing Packed Binary Data: struct](#org8221256)
+        7.  [File Context Managers](#org1cedccf)
+    3.  [Core Types Review and Summary](#orgb4255e5)
+        1.  [Object Flexibility](#org70d3ed4)
 
 
-<a id="orgb22cb5b"></a>
+<a id="org673b23f"></a>
 
 # Build-in object preview
 
@@ -128,7 +143,7 @@
 </table>
 
 
-<a id="org14b55fc"></a>
+<a id="org632ea68"></a>
 
 # Immutability
 
@@ -141,12 +156,12 @@ Python中的对象要么是不可变的(numbers, strings, tuples)
 要么是可变的(lists, sets, dictionaries)
 
 
-<a id="org87f4b43"></a>
+<a id="org71cc254"></a>
 
 # TODO bytearray
 
 
-<a id="org9dcc1c4"></a>
+<a id="org5b59adb"></a>
 
 # 泛型操作和类型操作
 
@@ -154,12 +169,12 @@ Python中的对象要么是不可变的(numbers, strings, tuples)
 -   类型操作通常是对象的方法调用, 如 `s.upper()`
 
 
-<a id="orgc9dc4fb"></a>
+<a id="orgb5d2c8d"></a>
 
 # TODO Pattern Matching
 
 
-<a id="orge05f49a"></a>
+<a id="org006e4f6"></a>
 
 # List comprehension expression
 
@@ -167,12 +182,12 @@ Python中的对象要么是不可变的(numbers, strings, tuples)
 -   `[row[1] for row in M if row[1] % 2 != 0]`
 
 
-<a id="org85f9861"></a>
+<a id="orgfc571a1"></a>
 
 # Dictionaries
 
 
-<a id="orgb8e840e"></a>
+<a id="orga299bf8"></a>
 
 # Iteration
 
@@ -181,26 +196,26 @@ In a nutshell, an object is iterable if it is either a physically stored sequenc
 支持迭代协议的对象都可以迭代&#x2013;&#x2014;iter() next()
 
 
-<a id="orgfaa2da3"></a>
+<a id="org812e02a"></a>
 
 # Tuples
 
 Functionally, they’re used to represent fixed collections of items: the components of a specific calendar date, for instance. Syntactically, they are normally coded in parentheses instead of square brackets, and they support arbitrary types, arbitrary nesting, and the usual sequence
 
 
-<a id="orgac750a0"></a>
+<a id="org333797b"></a>
 
 ## Why Tuples?
 
 So, why have a type that is like a list, but supports fewer operations? Frankly, tuples are not generally used as often as lists in practice, but their immutability is the whole point. If you pass a collection of objects around your program as a list, it can be changed anywhere; if you use a tuple, it cannot. That is, tuples provide a sort of integrity constraint that is convenient in programs larger than those we’ll write here. We’ll talk more about tuples later in the book, including an extension that builds upon them called named tuples. For now, though, let’s jump ahead to our last major core type: the file.
 
 
-<a id="orgebad954"></a>
+<a id="org3492c82"></a>
 
 # Files
 
 
-<a id="org05fcad6"></a>
+<a id="org3b71c35"></a>
 
 # Numeric Types
 
@@ -215,12 +230,12 @@ So, why have a type that is like a list, but supports fewer operations? Frankly,
 -   Third-party extensions: vectors, libraries, visualization, plotting, etc.
 
 
-<a id="org16e110d"></a>
+<a id="org5a954d6"></a>
 
 ## Numeric Literals
 
 
-<a id="org09f5d29"></a>
+<a id="orgb5395b0"></a>
 
 ### Decimal Type
 
@@ -249,12 +264,12 @@ So, why have a type that is like a list, but supports fewer operations? Frankly,
     Decimal('2000.33')
 
 
-<a id="org292b089"></a>
+<a id="orgffc5df1"></a>
 
 ### Fraction Type
 
 
-<a id="org69075da"></a>
+<a id="org68e0150"></a>
 
 ## IMMUTABLE CONSTRAINTS AND FROZEN SETS
 
@@ -300,7 +315,7 @@ Sets自身是可变的, 因此也不能嵌套在其他Set中. 但是可以使用
     Out[18]: {1, 2, frozenset({1, 2})}
 
 
-<a id="org2a6aed2"></a>
+<a id="org463c51d"></a>
 
 ### WHY SETS?
 
@@ -387,7 +402,7 @@ Sets自身是可变的, 因此也不能嵌套在其他Set中. 但是可以使用
         {'sue'}
 
 
-<a id="org4860be9"></a>
+<a id="org57a472e"></a>
 
 ## Booleans
 
@@ -407,7 +422,7 @@ Sets自身是可变的, 因此也不能嵌套在其他Set中. 但是可以使用
     5
 
 
-<a id="org1f85bea"></a>
+<a id="orgca6b9a0"></a>
 
 # Dynamic Type(动态类型)
 
@@ -432,7 +447,7 @@ Technically speaking, objects have more structure than just enough space to repr
 **Objects Are Garbage-Collected**
 
 
-<a id="org62028b1"></a>
+<a id="org6661e02"></a>
 
 ## Shared References
 
@@ -448,7 +463,7 @@ Names and objects after next running the assignment b = a. Variable b becomes a 
 Names and objects after finally running the assignment a = ‘spam’. Variable a references the new object (i.e., piece of memory) created by running the literal expression ‘spam’, but variable b still refers to the original object 3. Because this assignment is not an in-place change to the object 3, it changes only variable a, not b.
 
 
-<a id="org8ff4066"></a>
+<a id="orgf16dc00"></a>
 
 ## Shared References and In-Place Changes
 
@@ -457,7 +472,7 @@ Names and objects after finally running the assignment a = ‘spam’. Variable 
     X = copy.deepcopy(Y)      # Make deep copy of any object Y: copy all nested parts
 
 
-<a id="orgc35c749"></a>
+<a id="orgc14f318"></a>
 
 ## Shared References and Equality
 
@@ -489,12 +504,12 @@ Really, **is** simply compares the pointers that implement references, and it se
 the `getrefcount` function in the standard sys module returns the object’s reference count. When I ask about the integer object 1 in the IDLE GUI, for instance, it reports 647 reuses of this same object (most of which are in IDLE’s system code, not mine, though this returns 173 outside IDLE so Python must be hoarding 1s as well):
 
 
-<a id="org05e686a"></a>
+<a id="orge2fe27d"></a>
 
 ## Dynamic Typing Is Everywhere
 
 
-<a id="orgca947cd"></a>
+<a id="org9a0201b"></a>
 
 ## “WEAK” REFERENCES
 
@@ -505,14 +520,14 @@ In short, a weak reference, implemented by the `weakref` standard library module
 This can be useful in dictionary-based caches of large objects, for example; otherwise, the cache’s reference alone would keep the object in memory indefinitely. Still, this is really just a special-case extension to the reference model. For more details, see Python’s library manual.
 
 
-<a id="org1e795a5"></a>
+<a id="orgf2ff156"></a>
 
 # String Fundamentals
 
 **string** — an ordered collection of characters used to store and represent text- and bytes-based information. 
 
 
-<a id="orgc9b9866"></a>
+<a id="orgfdb1073"></a>
 
 ## Unicode: The Short Story
 
@@ -523,7 +538,7 @@ In fact, the primary distinction of Unicode often lies in the translation (a.k.a
 Unicode主要在读取和写入文件的时候才需要考虑. 其他时候用String就可以了.
 
 
-<a id="org7062515"></a>
+<a id="orgc24589c"></a>
 
 ## String Basics
 
@@ -534,17 +549,17 @@ Strictly speaking, Python strings are categorized as immutable sequences, meanin
 严格的说, Strings属于不可变序列. 
 
 
-<a id="org6082f4d"></a>
+<a id="orga8c1fa0"></a>
 
 ## String Literals
 
 
-<a id="org636f342"></a>
+<a id="org1bba768"></a>
 
 ### Single- and Double-Quoted Strings Are the Same
 
 
-<a id="org9555f3a"></a>
+<a id="org2afd9fd"></a>
 
 ### Escape Sequences Represent Special Characters
 
@@ -691,7 +706,7 @@ In Python, a zero (null) character like this does not terminate a string the way
     3
 
 
-<a id="org16aba31"></a>
+<a id="org2ee008f"></a>
 
 ### Raw Strings Suppress Escapes
 
@@ -727,17 +742,17 @@ In Python, a zero (null) character like this does not terminate a string the way
 3.  不要使用r'&#x2026;'
 
 
-<a id="org139ea34"></a>
+<a id="org55836ca"></a>
 
 ### Triple Quotes Code Multiline Block Strings
 
 
-<a id="org421388b"></a>
+<a id="org057b91c"></a>
 
 ## Strings in Action
 
 
-<a id="orgf30c467"></a>
+<a id="orgd181895"></a>
 
 ### Basic Operations
 
@@ -747,7 +762,7 @@ In Python, a zero (null) character like this does not terminate a string the way
 -   `for c in s:`
 
 
-<a id="org56457cd"></a>
+<a id="orgcf68542"></a>
 
 ### Indexing and Slicing
 
@@ -799,7 +814,7 @@ Offsets and slices: positive offsets start from the left end (offset 0 is the fi
         a single slice expression can be used to return all but the first item of a list. Here, `sys.argv[1:]` returns the desired list, ['−a', '−b', '−c']. You can then process this list without having to accommodate the program name at the front.
 
 
-<a id="org7332ade"></a>
+<a id="org6c45917"></a>
 
 ### String Conversion Tools
 
@@ -840,12 +855,12 @@ The int function converts a string to a number, and the str function converts a 
         'That is 1 dead bird!'
 
 
-<a id="orgd913fa9"></a>
+<a id="org290aea5"></a>
 
 ## String Methods
 
 
-<a id="orgb11c87c"></a>
+<a id="orgb64f5cb"></a>
 
 ### Methods of Strings
 
@@ -994,7 +1009,7 @@ Table 7-3. String method calls in Python 3.3
 </table>
 
 
-<a id="org3440da6"></a>
+<a id="org5dcdc64"></a>
 
 ### String Method Examples: Changing Strings II
 
@@ -1014,7 +1029,7 @@ Table 7-3. String method calls in Python 3.3
     ["i'm", 'a', 'lumberjack']
 
 
-<a id="org76c69ec"></a>
+<a id="orgd879d8f"></a>
 
 ## String Formatting Expressions
 
@@ -1035,7 +1050,7 @@ Table 7-3. String method calls in Python 3.3
     'spam, ham and eggs'
 
 
-<a id="org5ea8553"></a>
+<a id="orgd0cc6b6"></a>
 
 ### Adding Keys, Attributes, and Offsets
 
@@ -1048,7 +1063,7 @@ Table 7-3. String method calls in Python 3.3
     'My laptop runs win32'
 
 
-<a id="org2a11577"></a>
+<a id="org96ff891"></a>
 
 ## General Type Categories
 
@@ -1065,7 +1080,7 @@ Table 7-3. String method calls in Python 3.3
     Support indexing by key, etc.
 
 
-<a id="org586852d"></a>
+<a id="org27ebf59"></a>
 
 ### Mutable Types Can Be Changed in Place
 
@@ -1078,7 +1093,554 @@ Table 7-3. String method calls in Python 3.3
     Conversely, the mutable types can always be changed in place with operations that do not create new objects. Although such objects can be copied, in-place changes support direct modification.
 
 
-<a id="org0f5fa61"></a>
+<a id="org7f5b1be"></a>
 
 # Lists and Dictionaries
+
+
+<a id="org3e38bf1"></a>
+
+# Tuples, Files, and Everything Else
+
+
+<a id="org8c4a3df"></a>
+
+## Tuples
+
+-   Ordered collections of arbitrary objects
+    
+    Like strings and lists, tuples are positionally ordered collections of objects (i.e., they maintain a left-to-right order among their contents); like lists, they can embed any kind of object.
+
+-   Accessed by offset
+    
+    Like strings and lists, items in a tuple are accessed by offset (not by key); they support all the offset-based access operations, such as indexing and slicing.
+
+-   Of the category “immutable sequence”
+    
+    Like strings and lists, tuples are sequences; they support many of the same operations. However, like strings, tuples are immutable; they don’t support any of the in-place change operations applied to lists.
+
+-   Fixed-length, heterogeneous, and arbitrarily nestable
+    
+    Because tuples are immutable, you cannot change the size of a tuple without making a copy. On the other hand, tuples can hold any type of object, including other compound objects (e.g., lists, dictionaries, other tuples), and so support arbitrary nesting.
+
+-   Arrays of object references
+    
+    Like lists, tuples are best thought of as object reference arrays; tuples store access points to other objects (references), and indexing a tuple is relatively quick.
+
+
+<a id="org8def3ef"></a>
+
+### Tuples in Action
+
+    >>> (1, 2) + (3, 4)            # Concatenation
+    (1, 2, 3, 4)
+    
+    >>> (1, 2) * 4                 # Repetition
+    (1, 2, 1, 2, 1, 2, 1, 2)
+    
+    >>> T = (1, 2, 3, 4)           # Indexing, slicing
+    >>> T[0], T[1:3]
+    (1, (2, 3))
+
+1.  TUPLE SYNTAX PECULIARITIES: COMMAS AND PARENTHESES
+
+        >>> x = (40)                   # An integer!
+        >>> x
+        40
+        >>> y = (40,)                  # A tuple containing an integer
+        >>> y
+        (40,)
+
+2.  CONVERSIONS, METHODS, AND IMMUTABILITY
+
+        >>> T = ('cc', 'aa', 'dd', 'bb')
+        >>> tmp = list(T)                  # Make a list from a tuple's items
+        >>> tmp.sort()                     # Sort the list
+        >>> tmp
+        ['aa', 'bb', 'cc', 'dd']
+        >>> T = tuple(tmp)                 # Make a tuple from the list's items
+        >>> T
+        ('aa', 'bb', 'cc', 'dd')
+        
+        >>> sorted(T)                      # Or use the sorted built-in, and save two steps
+        ['aa', 'bb', 'cc', 'dd']
+    
+        >>> T = (1, 2, 3, 2, 4, 2)         # Tuple methods in 2.6, 3.0, and later
+        >>> T.index(2)                     # Offset of first appearance of 2
+        1
+        >>> T.index(2, 2)                  # Offset of appearance after offset 2
+        3
+        >>> T.count(2)                     # How many 2s are there?
+        3
+    
+        >>> T = (1, [2, 3], 4)
+        >>> T[1] = 'spam'                  # This fails: can't change tuple itself
+        TypeError: object doesn't support item assignment
+        
+        >>> T[1][0] = 'spam'               # This works: can change mutables inside
+        >>> T
+        (1, ['spam', 3], 4)
+
+
+<a id="org2519762"></a>
+
+### Why Lists and Tuples?
+
+Tuples can also be used in places that lists cannot—for example, as dictionary keys (see the sparse matrix example in Chapter 8). Some built-in operations may also require or imply tuples instead of lists (e.g., the substitution values in a string format expression), though such operations have often been generalized in recent years to be more flexible. As a rule of thumb, lists are the tool of choice for ordered collections that might need to change; tuples can handle the other cases of fixed associations.
+
+
+<a id="orgbb30579"></a>
+
+### Records Revisited: Named Tuples
+
+    >>> from collections import namedtuple                     # Import extension type
+    >>> Rec = namedtuple('Rec', ['name', 'age', 'jobs'])       # Make a generated class
+    >>> bob = Rec('Bob', age=40.5, jobs=['dev', 'mgr'])        # A named-tuple record
+    >>> bob
+    Rec(name='Bob', age=40.5, jobs=['dev', 'mgr'])
+    
+    >>> bob[0], bob[2]                                         # Access by position
+    ('Bob', ['dev', 'mgr'])
+    >>> bob.name, bob.jobs                                     # Access by attribute
+    ('Bob', ['dev', 'mgr'])
+
+Converting to a dictionary supports key-based behavior when needed:
+
+    >>> O = bob._asdict()                                      # Dictionary-like form
+    >>> O['name'], O['jobs']                                   # Access by key too
+    ('Bob', ['dev', 'mgr'])
+    >>> O
+    OrderedDict([('name', 'Bob'), ('age', 40.5), ('jobs', ['dev', 'mgr'])])
+
+named tuples are a tuple/class/dictionary hybrid. 
+
+    >>> bob = Rec('Bob', 40.5, ['dev', 'mgr'])    # For both tuples and named tuples
+    >>> name, age, jobs = bob                     # Tuple assignment (Chapter 11)
+    >>> name, jobs
+    ('Bob', ['dev', 'mgr'])
+    
+    >>> for x in bob: print(x)                    # Iteration context (Chapters 14, 20)
+    ...prints Bob, 40.5, ['dev', 'mgr']...
+
+    >>> bob = {'name': 'Bob', 'age': 40.5, 'jobs': ['dev', 'mgr']}
+    >>> job, name, age = bob.values()
+    >>> name, job                                 # Dict equivalent (but order may vary)
+    ('Bob', ['dev', 'mgr'])
+    
+    >>> for x in bob: print(bob[x])               # Step though keys, index values
+    ...prints values...
+    >>> for x in bob.values(): print(x)           # Step through values view
+    ...prints values...
+
+
+<a id="org67a43dc"></a>
+
+## Files
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Operation</td>
+<td class="org-left">Interpretation</td>
+</tr>
+
+
+<tr>
+<td class="org-left">output = open(r'C:\spam', 'w')</td>
+<td class="org-left">Create output file ('w' means write)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">input = open('data', 'r')</td>
+<td class="org-left">Create input file ('r' means read)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">input = open('data')</td>
+<td class="org-left">Same as prior line ('r' is the default)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">aString = input.read()</td>
+<td class="org-left">Read entire file into a single string</td>
+</tr>
+
+
+<tr>
+<td class="org-left">aString = input.read(N)</td>
+<td class="org-left">Read up to next N characters (or bytes) into a string</td>
+</tr>
+
+
+<tr>
+<td class="org-left">aString = input.readline()</td>
+<td class="org-left">Read next line (including \n newline) into a string</td>
+</tr>
+
+
+<tr>
+<td class="org-left">aList = input.readlines()</td>
+<td class="org-left">Read entire file into list of line strings (with \n)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">output.write(aString)</td>
+<td class="org-left">Write a string of characters (or bytes) into file</td>
+</tr>
+
+
+<tr>
+<td class="org-left">output.writelines(aList)</td>
+<td class="org-left">Write all line strings in a list into file</td>
+</tr>
+
+
+<tr>
+<td class="org-left">output.close()</td>
+<td class="org-left">Manual close (done for you when file is collected)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">output.flush()</td>
+<td class="org-left">Flush output buffer to disk without closing</td>
+</tr>
+
+
+<tr>
+<td class="org-left">anyFile.seek(N)</td>
+<td class="org-left">Change file position to offset N for next operation</td>
+</tr>
+
+
+<tr>
+<td class="org-left">for line in open('data'): use line</td>
+<td class="org-left">File iterators read line by line</td>
+</tr>
+
+
+<tr>
+<td class="org-left">open('f.txt', encoding='latin-1')</td>
+<td class="org-left">Python 3.X Unicode text files (str strings)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">open('f.bin', 'rb')</td>
+<td class="org-left">Python 3.X bytes files (bytes strings)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">codecs.open('f.txt', encoding='utf8')</td>
+<td class="org-left">Python 2.X Unicode text files (unicode strings)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">open('f.bin', 'rb')</td>
+<td class="org-left">Python 2.X bytes files (str strings)</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="orgd1ca47f"></a>
+
+### Opening Files
+
+    afile = open(filename, mode)
+    afile.method()
+
+The second argument to open, processing mode, is typically the string 'r' to open for text input (the default), 'w' to create and open for text output, or 'a' to open for appending text to the end (e.g., for adding to logfiles). The processing mode argument can specify additional options:
+
+Adding a b to the mode string allows for binary data (end-of-line translations and 3.X Unicode encodings are turned off).
+
+Adding a + opens the file for both input and output (i.e., you can both read and write to the same file object, often in conjunction with seek operations to reposition in the file).
+
+
+<a id="org52e0cfe"></a>
+
+### Files in Action
+
+    >>> myfile = open('myfile.txt', 'w')        # Open for text output: create/empty
+    >>> myfile.write('hello text file\n')       # Write a line of text: string
+    16
+    >>> myfile.write('goodbye text file\n')
+    18
+    >>> myfile.close()                          # Flush output buffers to disk
+    
+    >>> myfile = open('myfile.txt')             # Open for text input: 'r' is default
+    >>> myfile.readline()                       # Read the lines back
+    'hello text file\n'
+    >>> myfile.readline()
+    'goodbye text file\n'
+    >>> myfile.readline()                       # Empty string: end-of-file
+    ''
+
+    >>> open('myfile.txt').read()               # Read all at once into string
+    'hello text file\ngoodbye text file\n'
+    
+    >>> print(open('myfile.txt').read())        # User-friendly display
+    hello text file
+    goodbye text file
+
+    >>> for line in open('myfile.txt'):         # Use file iterators, not reads
+    ...     print(line, end='')
+    ...
+    hello text file
+    goodbye text file
+
+
+<a id="org959ab36"></a>
+
+### Storing Native Python Objects: pickle
+
+The pickle module is a more advanced tool that allows us to store almost any Python object in a file directly, with no to- or from-string conversion requirement on our part. It’s like a super-general data formatting and parsing utility. To store a dictionary in a file, for instance, we pickle it directly:
+
+    >>> D = {'a': 1, 'b': 2}
+    >>> F = open('datafile.pkl', 'wb')
+    >>> import pickle
+    >>> pickle.dump(D, F)                          # Pickle any object to file
+    >>> F.close()
+
+Then, to get the dictionary back later, we simply use pickle again to re-create it:
+
+    >>> F = open('datafile.pkl', 'rb')
+    >>> E = pickle.load(F)                         # Load any object from file
+    >>> E
+    {'a': 1, 'b': 2}
+
+
+<a id="org0b9415e"></a>
+
+### Storing Python Objects in JSON Format
+
+    >>> name = dict(first='Bob', last='Smith')
+    >>> rec  = dict(name=name, job=['dev', 'mgr'], age=40.5)
+    >>> rec
+    {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+
+The final dictionary format displayed here is a valid literal in Python code, and almost passes for JSON when printed as is, but the json module makes the translation official—here translating Python objects to and from a JSON serialized string representation in memory:
+
+    >>> import json
+    >>> json.dumps(rec)
+    '{"job": ["dev", "mgr"], "name": {"last": "Smith", "first": "Bob"}, "age": 40.5}'
+    
+    >>> S = json.dumps(rec)
+    >>> S
+    '{"job": ["dev", "mgr"], "name": {"last": "Smith", "first": "Bob"}, "age": 40.5}'
+    
+    >>> O = json.loads(S)
+    >>> O
+    {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+    >>> O == rec
+    True
+
+It’s similarly straightforward to translate Python objects to and from JSON data strings in files. Prior to being stored in a file, your data is simply Python objects; the JSON module recreates them from the JSON textual representation when it loads it from the file:
+
+    >>> json.dump(rec, fp=open('testjson.txt', 'w'), indent=4)
+    >>> print(open('testjson.txt').read())
+    {
+        "job": [
+    	"dev",
+    	"mgr"
+        ],
+        "name": {
+    	"last": "Smith",
+    	"first": "Bob"
+        },
+        "age": 40.5
+    }
+    >>> P = json.load(open('testjson.txt'))
+    >>> P
+    {'job': ['dev', 'mgr'], 'name': {'last': 'Smith', 'first': 'Bob'}, 'age': 40.5}
+
+
+<a id="org50a7eea"></a>
+
+### CVS
+
+    >>> import csv
+    >>> rdr = csv.reader(open('csvdata.txt'))
+    >>> for row in rdr: print(row)
+    ...
+    ['a', 'bbb', 'cc', 'dddd']
+    ['11', '22', '33', '44']
+
+
+<a id="org8221256"></a>
+
+### Storing Packed Binary Data: struct
+
+We saw an overview of this tool in Chapter 4, but let’s take another quick look here for more perspective. To create a packed binary data file, open it in 'wb' (write binary) mode, and pass struct a format string and some Python objects. The format string used here means pack as a 4-byte integer, a 4-character string (which must be a bytes string as of Python 3.2), and a 2-byte integer, all in big-endian form (other format codes handle padding bytes, floating-point numbers, and more):
+
+    >>> F = open('data.bin', 'wb')                     # Open binary output file
+    >>> import struct
+    >>> data = struct.pack('>i4sh', 7, b'spam', 8)     # Make packed binary data
+    >>> data
+    b'\x00\x00\x00\x07spam\x00\x08'
+    >>> F.write(data)                                  # Write byte string
+    >>> F.close()
+
+Python creates a binary bytes data string, which we write out to the file normally—this one consists mostly of nonprintable characters printed in hexadecimal escapes, and is the same binary file we met earlier. To parse the values out to normal Python objects, we simply read the string back and unpack it using the same format string. Python extracts the values into normal Python objects—integers and a string:
+
+    >>> F = open('data.bin', 'rb')
+    >>> data = F.read()                                # Get packed binary data
+    >>> data
+    b'\x00\x00\x00\x07spam\x00\x08'
+    >>> values = struct.unpack('>i4sh', data)          # Convert to Python objects
+    >>> values
+    (7, b'spam', 8)
+
+
+<a id="org1cedccf"></a>
+
+### File Context Managers
+
+    with open(r'C:\code\data.txt') as myfile:     # See Chapter 34 for details
+        for line in myfile:
+    	...use line here...
+
+
+<a id="orgb4255e5"></a>
+
+## Core Types Review and Summary
+
+-   Objects share operations according to their category; for instance, sequence objects—strings, lists, and tuples—all share sequence operations such as concatenation, length, and indexing.
+
+-   Only mutable objects—lists, dictionaries, and sets—may be changed in place; you cannot change numbers, strings, or tuples in place.
+
+-   Files export only methods, so mutability doesn’t really apply to them—their state may be changed when they are processed, but this isn’t quite the same as Python core type mutability constraints.
+
+-   “Numbers” in Table 9-3 includes all number types: integer (and the distinct long integer in 2.X), floating point, complex, decimal, and fraction.
+
+-   “Strings” in Table 9-3 includes str, as well as bytes in 3.X and unicode in 2.X; the bytearray string type in 3.X, 2.6, and 2.7 is mutable.
+
+-   Sets are something like the keys of a valueless dictionary, but they don’t map to values and are not ordered, so sets are neither a mapping nor a sequence type; frozenset is an immutable variant of set.
+
+-   In addition to type category operations, as of Python 2.6 and 3.0 all the types in Table 9-3 have callable methods, which are generally specific to their type.
+
+Table 9-3. Object classifications
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Object type</td>
+<td class="org-left">Category</td>
+<td class="org-left">Mutable?</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Numbers (all)</td>
+<td class="org-left">Numeric</td>
+<td class="org-left">No</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Strings (all)</td>
+<td class="org-left">Sequence</td>
+<td class="org-left">No</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Lists</td>
+<td class="org-left">Sequence</td>
+<td class="org-left">Yes</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Dictionaries</td>
+<td class="org-left">Mapping</td>
+<td class="org-left">Yes</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Tuples</td>
+<td class="org-left">Sequence</td>
+<td class="org-left">No</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Files</td>
+<td class="org-left">Extension</td>
+<td class="org-left">N/A</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Sets</td>
+<td class="org-left">Set</td>
+<td class="org-left">Yes</td>
+</tr>
+
+
+<tr>
+<td class="org-left">Frozenset</td>
+<td class="org-left">Set</td>
+<td class="org-left">No</td>
+</tr>
+
+
+<tr>
+<td class="org-left">bytearray</td>
+<td class="org-left">Sequence</td>
+<td class="org-left">Yes</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org70d3ed4"></a>
+
+### Object Flexibility
+
+This part of the book introduced a number of compound object types—collections with components. In general:
+
+-   Lists, dictionaries, and tuples can hold any kind of object.
+    
+        In [71]: b = ([1,2], 3, 4)
+        
+        In [72]: b
+        Out[72]: ([1, 2], 3, 4)
+
+-   Sets can contain any type of immutable object.
+    
+        In [68]: a.add([1, 2])
+        ---------------------------------------------------------------------------
+        TypeError                                 Traceback (most recent call last)
+        <ipython-input-68-e2fb23224f38> in <module>
+        ----> 1 a.add([1, 2])
+        
+        TypeError: unhashable type: 'list'
+
+-   Lists, dictionaries, and tuples can be arbitrarily nested.
+
+-   Lists, dictionaries, and sets can dynamically grow and shrink.
 
