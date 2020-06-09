@@ -22,14 +22,12 @@
 
  要么是可变的(lists, sets, dictionaries)
 
-  
 * TODO bytearray
 
 * 泛型操作和类型操作
 
   - 泛型操作通常是函数调用, 如 ~len(x)~
   - 类型操作通常是对象的方法调用, 如 ~s.upper()~
-
 
 * TODO Pattern Matching
 
@@ -493,7 +491,6 @@
        'maps'
      #+end_src
      
-     
 ***** WHY YOU WILL CARE: SLICES
       #+begin_src python
 	# File echo.py
@@ -505,7 +502,6 @@
       #+end_src
 
       a single slice expression can be used to return all but the first item of a list. Here, ~sys.argv[1:]~ returns the desired list, ['−a', '−b', '−c']. You can then process this list without having to accommodate the program name at the front.
-      
       
 *** String Conversion Tools
     #+begin_src python
@@ -552,7 +548,6 @@
        'That is 1 dead bird!'
      #+end_src
 
-     
 ** String Methods
    
 *** Methods of Strings
@@ -650,7 +645,6 @@
 
 
      
-
 *** Mutable Types Can Be Changed in Place
 
     - Immutables (numbers, strings, tuples, frozensets)
@@ -699,7 +693,6 @@
       (1, (2, 3))
     #+end_src
 
-    
 **** TUPLE SYNTAX PECULIARITIES: COMMAS AND PARENTHESES
      #+begin_src python
        >>> x = (40)                   # An integer!
@@ -961,7 +954,6 @@
     #+end_src
 
     
-   
 *** File Context Managers
 
     #+begin_src python
@@ -1027,3 +1019,494 @@
     - Lists, dictionaries, and tuples can be arbitrarily nested.
 
     - Lists, dictionaries, and sets can dynamically grow and shrink.
+
+      
+[[file:./img/lp5e_0903.png]]
+
+*** Assignment Creates References, Not Copies
+
+*** Repetition Adds One Level Deep
+
+*** Beware of Cyclic Data Structures
+    #+begin_src python
+      >>> L = ['grail']                # Append reference to same object
+      >>> L.append(L)                  # Generates cycle in object: [...]
+      >>> L
+      ['grail', [...]]
+    #+end_src
+
+*** Immutable Types Can’t Be Changed in Place
+
+* Chapter 10. Introducing Python Statements
+
+** The Python Conceptual Hierarchy Revisited
+   
+   - Programs are composed of modules.
+
+   - Modules contain statements.
+
+   - Statements contain expressions.
+
+   - Expressions create and process objects.
+
+** Python’s Statements
+   
+   Table 10-1. Python statements
+   | Statement                   | Role                         | Example                                                                   |
+   | Assignment                  | Creating references          | a, b = 'good', 'bad'                                                      |
+   | Calls and other expressions | Running functions            | log.write("spam, ham")                                                    |
+   | print calls                 | Printing objects             | print('The Killer', joke)                                                 |
+   | if/elif/else                | Selecting actions            | if "python" in text:    print(text)                                       |
+   | for/else                    | Iteration                    | for x in mylist:                                                          |
+   | print(x) while/else         | General loops                | while X > Y:    print('hello')                                            |
+   | pass                        | Empty placeholder            | while True:    pass                                                       |
+   | break                       | Loop exit                    | while True:    if exittest(): break                                       |
+   | continue                    | Loop continue                | while True:    if skiptest(): continue                                    |
+   | def                         | Functions and methods        | def f(a, b, c=1, *d):    print(a+b+c+d[0])                                |
+   | return                      | Functions results            | def f(a, b, c=1, *d):    return a+b+c+d[0]                                |
+   | yield                       | Generator functions          | def gen(n):    for i in n: yield i*2                                      |
+   | global                      | Namespaces                   | x = 'old' def function():    global x, y; x = 'new'                       |
+   | nonlocal                    | Namespaces (3.X)             | def outer():    x = 'old'    def function():        nonlocal x; x = 'new' |
+   | import                      | Module access                | import sys                                                                |
+   | from                        | Attribute access             | from sys import stdin                                                     |
+   | class                       | Building objects             | class Subclass(Superclass):    staticData = []    def method(self): pass  |
+   | try/except/ finally         | Catching exceptions          | try:    action() except:    print('action error')                         |
+   | raise                       | Triggering exceptions        | raise EndSearch(location)                                                 |
+   | assert                      | Debugging checks             | assert X > Y, 'X too small'                                               |
+   | with/as                     | Context managers (3.X, 2.6+) | with open('data') as myfile:    process(myfile)                           |
+   | del                         | Deleting references          | del data[k] del data[i:j] del obj.attr del variable                       |
+
+* Chapter 11. Assignments, Expressions, and Prints
+** Assignment Statements
+*** Extended Sequence Unpacking in Python 3.X
+    #+begin_src python
+      In [83]: a, *b = [1, 2, 3, 4]
+
+      In [84]: a
+      Out[84]: 1
+
+      In [85]: b
+      Out[85]: [2, 3, 4]
+    #+end_src
+
+    #+begin_src python
+      >>> a, *b, c = range(4)
+      >>> a, b, c
+      (0, [1, 2], 3)
+    #+end_src
+
+    #+begin_src python
+      >>> L = [1, 2, 3, 4]
+      >>> while L:
+      ...     front, *L = L                    # Get first, rest without slicing
+      ...     print(front, L)
+      ...
+      1 [2, 3, 4]
+      2 [3, 4]
+      3 [4]
+      4 []
+    #+end_src
+**** MULTIPLE-TARGET ASSIGNMENT AND SHARED REFERENCES
+     #+begin_src python
+       >>> a = b = []
+       >>> b.append(42)
+       >>> a, b
+       ([42], [42])
+     #+end_src
+*** Augmented Assignments
+    #+begin_src python
+      >>> L = []
+      >>> L += 'spam'                 # += and extend allow any sequence, but + does not!
+      >>> L
+      ['s', 'p', 'a', 'm']
+      >>> L = L + 'spam'
+      TypeError: can only concatenate list (not "str") to list
+    #+end_src
+**** AUGMENTED ASSIGNMENT AND SHARED REFERENCES
+     #+begin_src python
+       >>> L = [1, 2]
+       >>> M = L                       # L and M reference the same object
+       >>> L = L + [3, 4]              # Concatenation makes a new object
+       >>> L, M                        # Changes L but not M
+       ([1, 2, 3, 4], [1, 2])
+
+       >>> L = [1, 2]
+       >>> M = L
+       >>> L += [3, 4]                 # But += really means extend
+       >>> L, M                        # M sees the in-place change too!
+       ([1, 2, 3, 4], [1, 2, 3, 4])
+     #+end_src
+*** Variable Name Rules
+    Table 11-3. Python 3.X reserved words
+    
+    | False | class  | finally | is     | return | None | continue |
+    | for   | lambda | try     | True   | def    | from | nonlocal |
+    | while | and    | del     | global | not    | with | as       |
+    | elif  | if     | or      | yield  | assert | else | import   |
+    | pass  | break  | except  | in     | raise  |      |          |
+**** NAMING CONVENTIONS
+
+     - Names that begin with a single underscore (_X) are not imported by a from module import * statement (described in Chapter 23).
+
+     - Names that have two leading and trailing underscores (__X__) are system-defined names that have special meaning to the interpreter.
+
+     - Names that begin with two underscores and do not end with two more (__X) are localized (“mangled”) to enclosing classes (see the discussion of pseudoprivate attributes in Chapter 31).
+
+     - The name that is just a single underscore (_) retains the result of the last expression when you are working interactively.
+
+** Expression Statements
+   Expressions are commonly used as statements in two situations:
+
+   - For calls to functions and methods
+
+     Some functions and methods do their work without returning a value. Such functions are sometimes called procedures in other languages. Because they don’t return values that you might be interested in retaining, you can call these functions with expression statements.
+
+   - For printing values at the interactive prompt
+
+     Python echoes back the results of expressions typed at the interactive command line. Technically, these are expression statements, too; they serve as a shorthand for typing print statements.
+
+   Table 11-4. Common Python expression statements
+   | Operation              | Interpretation                                    |
+   | spam(eggs, ham)        | Function calls                                    |
+   | spam.ham(eggs)         | Method calls                                      |
+   | spam                   | Printing variables in the interactive interpreter |
+   | print(a, b, c, sep='') | Printing operations in Python 3.X                 |
+   | yield x ** 2           | Yielding expression statements                    |
+
+*** Expression Statements and In-Place Changes
+    
+    #+begin_src python
+      >>> L = [1, 2]
+      >>> L.append(3)               # Append is an in-place change
+      >>> L
+      [1, 2, 3]
+    #+end_src
+
+    However, it’s not unusual for Python newcomers to code such an operation as an assignment statement instead, intending to assign L to the larger list:
+    
+    #+begin_src python
+      >>> L = L.append(4)           # But append returns None, not L
+      >>> print(L)                  # So we lose our list!
+      None
+    #+end_src
+
+** Print Operations
+   
+*** The Python 3.X print Function
+
+**** CALL FORMAT
+     #+begin_src python
+       print([object, ...][, sep=' '][, end='\n'][, file=sys.stdout][, flush=False])
+     #+end_src
+
+**** THE 3.X PRINT FUNCTION IN ACTION
+     #+begin_src python
+       C:\code> c:\python33\python
+       >>> print()                                      # Display a blank line
+
+       >>> x = 'spam'
+       >>> y = 99
+       >>> z = ['eggs']
+       >>>
+       >>> print(x, y, z)                               # Print three objects per defaults
+       spam 99 ['eggs']
+     #+end_src
+
+     #+begin_src python
+       >>> print(x, y, z, sep='')                       # Suppress separator
+       spam99['eggs']
+       >>>
+       >>> print(x, y, z, sep=', ')                     # Custom separator
+       spam, 99, ['eggs']
+     #+end_src
+
+     #+begin_src python
+       >>> print(x, y, z, end='')                        # Suppress line break
+       spam 99 ['eggs']>>>
+       >>>
+       >>> print(x, y, z, end=''); print(x, y, z)        # Two prints, same output line
+       spam 99 ['eggs']spam 99 ['eggs']
+       >>> print(x, y, z, end='...\n')                   # Custom line end
+       spam 99 ['eggs']...
+       >>>
+     #+end_src
+
+     #+begin_src python
+       >>> print(x, y, z, sep='...', file=open('data.txt', 'w'))      # Print to a file
+       >>> print(x, y, z)                                             # Back to stdout
+       spam 99 ['eggs']
+       >>> print(open('data.txt').read())                             # Display file text
+       spam...99...['eggs']
+     #+end_src
+
+**** THE PYTHON “HELLO WORLD” PROGRAM
+     #+begin_src python
+       >>> import sys                         # Printing the hard way
+       >>> sys.stdout.write('hello world\n')
+       hello world
+     #+end_src
+
+**** MANUAL STREAM REDIRECTION
+     #+begin_src python
+       import sys
+       sys.stdout = open('log.txt', 'a')       # Redirects prints to a file
+       ...
+       print(x, y, x)                          # Shows up in log.txt
+     #+end_src
+
+**** AUTOMATIC STREAM REDIRECTION
+     #+begin_src python
+       C:\code> c:\python33\python
+       >>> import sys
+       >>> temp = sys.stdout                   # Save for restoring later
+       >>> sys.stdout = open('log.txt', 'a')   # Redirect prints to a file
+       >>> print('spam')                       # Prints go to file, not here
+       >>> print(1, 2, 3)
+       >>> sys.stdout.close()                  # Flush output to disk
+       >>> sys.stdout = temp                   # Restore original stream
+
+       >>> print('back here')                  # Prints show up here again
+       back here
+       >>> print(open('log.txt').read())       # Result of earlier prints
+       spam
+       1 2 3
+     #+end_src
+     
+     #+begin_src python
+       >>> X = 1; Y = 2
+       >>> print(X, Y)                                            # Print: the easy way
+       1 2
+       >>> import sys                                             # Print: the hard way
+       >>> sys.stdout.write(str(X) + ' ' + str(Y) + '\n')
+       1 2
+       4
+       >>> print(X, Y, file=open('temp1', 'w'))                   # Redirect text to file
+
+       >>> open('temp2', 'w').write(str(X) + ' ' + str(Y) + '\n') # Send to file manually
+       4
+       >>> print(open('temp1', 'rb').read())                      # Binary mode for bytes
+       b'1 2\r\n'
+       >>> print(open('temp2', 'rb').read())
+       b'1 2\r\n'
+     #+end_src
+
+* Chapter 12. if Tests and Syntax Rules
+
+** if Statements
+
+*** HANDLING LARGER ACTIONS
+    #+begin_src python
+      def function(): ...
+      def default(): ...
+
+      branch = {'spam': lambda: ...,             # A table of callable function objects
+		'ham':  function,
+		'eggs': lambda: ...}
+
+      branch.get(choice, default)()
+    #+end_src
+    
+    使用字典来实现对应函数的调用, 但是用if语句可能会更加直接.
+
+** Python Syntax Revisited
+
+* Chapter 13. while and for Loops
+
+** while Loops
+
+*** General Format
+    #+begin_src python
+      while test:                     # Loop test
+	  statements                  # Loop body
+      else:                           # Optional else
+	  statements                  # Run if didn't exit loop with break
+    #+end_src
+
+** break, continue, pass, and the Loop else
+   - break
+
+     Jumps out of the closest enclosing loop (past the entire loop statement)
+
+   - continue
+
+     Jumps to the top of the closest enclosing loop (to the loop’s header line)
+
+   - pass
+
+     Does nothing at all: it’s an empty statement placeholder
+
+   - Loop else block
+
+     Runs if and only if the loop is exited normally (i.e., without hitting a break)
+
+*** General Loop Format
+    #+begin_src python
+      while test:
+	  statements
+	  if test: break                 # Exit loop now, skip else if present
+	  if test: continue              # Go to test at top of loop now
+      else:
+	  statements                     # Run if we didn't hit a 'break'
+    #+end_src
+
+*** Loop else
+
+    不是由break终结情况下则进入到Loop else语句块中
+    #+begin_src python
+      x = y // 2                                # For some y > 1
+      while x > 1:
+	  if y % x == 0:                        # Remainder
+	      print(y, 'has factor', x)
+	      break                             # Skip else
+	  x -= 1
+      else:                                     # Normal exit
+	  print(y, 'is prime')
+    #+end_src
+
+    如果进入不了While循环, 则也会进入到else语句, 有点类似 ~do..while~ 语句
+
+    #+begin_src python
+      while x:                             # Exit when x empty
+	  if match(x[0]):
+	      print('Ni')
+	      break                        # Exit, go around else
+	  x = x[1:]
+      else:
+	  print('Not found')               # Only here if exhausted x
+    #+end_src
+
+** for Loops
+
+*** General Format
+    #+begin_src python
+      for target in object:                 # Assign object items to target
+	  statements                        # Repeated loop body: use target
+      else:                                 # Optional else part
+	  statements                        # If we didn't hit a 'break'
+    #+end_src
+
+** Loop Coding Techniques
+   
+   - The built-in range function (available since Python 0.X) produces a series of successively higher integers, which can be used as indexes in a for.
+
+   - The built-in zip function (available since Python 2.0) returns a series of parallel-item tuples, which can be used to traverse multiple sequences in a for.
+
+   - The built-in enumerate function (available since Python 2.3) generates both the values and indexes of items in an iterable, so we don’t need to count manually.
+
+   - The built-in map function (available since Python 1.0) can have a similar effect to zip in Python 2.X, though this role is removed in 3.X.
+
+*** Counter Loops: range
+    
+    #+begin_src python
+      >>> list(range(5)), list(range(2, 5)), list(range(0, 10, 2))
+      ([0, 1, 2, 3, 4], [2, 3, 4], [0, 2, 4, 6, 8])
+    #+end_src
+
+*** Sequence Scans: while and range Versus for
+    #+begin_src python
+      >>> X = 'spam'
+      >>> for item in X: print(item, end=' ')           # Simple iteration
+      ...
+      s p a m
+    #+end_src
+    
+    #+begin_src python
+      >>> i = 0
+      >>> while i < len(X):                             # while loop iteration
+      ...     print(X[i], end=' ')
+      ...     i += 1
+      ...
+      s p a m
+    #+end_src
+
+*** Nonexhaustive Traversals: range Versus Slices
+
+    #+begin_src python
+      >>> S = 'abcdefghijk'
+      >>> for c in S[::2]: print(c, end=' ')
+      ...
+      a c e g i k
+    #+end_src
+
+*** Changing Lists: range Versus Comprehensions
+    #+begin_src python
+      [x + 1 for x in L]
+    #+end_src
+
+** Parallel Traversals: zip and map
+   #+begin_src python
+     >>> T1, T2, T3 = (1,2,3), (4,5,6), (7,8,9)
+     >>> T3
+     (7, 8, 9)
+     >>> list(zip(T1, T2, T3))                   # Three tuples for three arguments
+     [(1, 4, 7), (2, 5, 8), (3, 6, 9)]
+   #+end_src
+   
+   zip truncates result tuples at the length of the shortest sequence when the argument lengths differ. 
+
+   #+begin_src python
+     >>> S1 = 'abc'
+     >>> S2 = 'xyz123'
+     >>>
+     >>> list(zip(S1, S2))                       # Truncates at len(shortest)
+     [('a', 'x'), ('b', 'y'), ('c', 'z')]
+   #+end_src
+
+
+   #+begin_src python
+     >>> list(map(ord, 'spam'))
+     [115, 112, 97, 109]
+   #+end_src
+
+*** DICTIONARY CONSTRUCTION WITH ZIP
+    #+begin_src python
+      >>> keys = ['spam', 'eggs', 'toast']
+      >>> vals = [1, 3, 5]
+
+      >>> D3 = dict(zip(keys, vals))
+      >>> D3
+      {'eggs': 3, 'toast': 5, 'spam': 1}
+    #+end_src
+
+    #+begin_src python
+      >>> {k: v for (k, v) in zip(keys, vals)}
+      {'eggs': 3, 'toast': 5, 'spam': 1}
+    #+end_src
+
+** Generating Both Offsets and Items: enumerate
+   #+begin_src python
+     >>> S = 'spam'
+     >>> for (offset, item) in enumerate(S):
+     ...     print(item, 'appears at offset', offset)
+     ...
+     s appears at offset 0
+     p appears at offset 1
+     a appears at offset 2
+     m appears at offset 3
+   #+end_src
+
+   #+begin_src python
+     >>> E = enumerate(S)
+     >>> E
+     <enumerate object at 0x0000000002A8B900>
+     >>> next(E)
+     (0, 's')
+     >>> next(E)
+     (1, 'p')
+     >>> next(E)
+     (2, 'a')
+   #+end_src
+
+   #+begin_src python
+     >>> [c * i for (i, c) in enumerate(S)]
+     ['', 'p', 'aa', 'mmm']
+
+     >>> for (i, l) in enumerate(open('test.txt')):
+     ...     print('%s) %s' % (i, l.rstrip()))
+     ...
+     0) aaaaaa
+     1) bbbbbb
+     2) cccccc
+   #+end_src
+
+* Chapter 14. Iterations and Comprehensions
