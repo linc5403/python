@@ -1510,3 +1510,541 @@
    #+end_src
 
 * Chapter 14. Iterations and Comprehensions
+
+** Iterations: A First Look
+   #+begin_src python
+     >>> for x in [1, 2, 3, 4]: print(x ** 2, end=' ')            # In 2.X: print x ** 2,
+     ...
+     1 4 9 16
+
+     >>> for x in (1, 2, 3, 4): print(x ** 3, end=' ')
+     ...
+     1 8 27 64
+
+     >>> for x in 'spam': print(x * 2, end=' ')
+     ...
+     ss pp aa mm
+   #+end_src
+   
+   *Iteration*
+
+   It’s essentially a generalization of the notion of sequences—an object is considered iterable if it is either a physically stored sequence, or an object that produces one result at a time in the context of an iteration tool like a for loop. In a sense, iterable objects include both physical sequences and virtual sequences computed on demand.
+   
+   迭代器的通用表示-如果一个对象物理存储是顺序的,或者一次可以生成一个结果, 我们就认为这是一个可迭代对象.
+
+*** The Iteration Protocol: File Iterators
+    
+    #+begin_src python
+      >>> f = open('script2.py')     # __next__ loads one line on each call too
+      >>> f.__next__()               # But raises an exception at end-of-file
+      'import sys\n'
+      >>> f.__next__()               # Use f.next() in 2.X, or next(f) in 2.X or 3.X
+      'print(sys.path)\n'
+      >>> f.__next__()
+      'x = 2\n'
+      >>> f.__next__()
+      'print(x ** 32)\n'
+      >>> f.__next__()
+      Traceback (most recent call last):
+	File "<stdin>", line 1, in <module>
+      StopIteration
+    #+end_src
+
+    This interface is most of what we call the iteration protocol in Python. Any object with a ~__next__~ method to advance to a next result, which raises StopIteration at the end of the series of results, is considered an iterator in Python. Any such object may also be stepped through with a for loop or other iteration tool, because all iteration tools normally work internally by calling ~__next__~ on each iteration and catching the StopIteration exception to determine when to exit. 
+
+    一个对象,如果提供了 ~__next__~ 方法来生成新的结果, 结果的末尾返回 ~StopIteration~ 异常, 我们就称之为迭代器( *iterator* )
+
+    #+begin_src python
+      >>> for line in open('script2.py'):       # Use file iterators to read by lines
+      ...     print(line.upper(), end='')       # Calls __next__, catches StopIteration
+      ...
+      IMPORT SYS
+      PRINT(SYS.PATH)
+      X = 2
+      PRINT(X ** 32)
+    #+end_src
+
+*** Manual Iteration: iter and next
+    #+begin_src python
+      >>> L = [1, 2, 3]
+      >>> I = iter(L)                    # Obtain an iterator object from an iterable
+      >>> I.__next__()                   # Call iterator's next to advance to next item
+      1
+      >>> I.__next__()                   # Or use I.next() in 2.X, next(I) in either line
+      2
+      >>> I.__next__()
+      3
+      >>> I.__next__()
+      ...error text omitted...
+      StopIteration
+    #+end_src
+
+    This initial step is not required for files, because a file object is its own iterator. Because they support just one iteration (they can’t seek backward to support multiple active scans), files have their own ~__next__~ method and do not need to return a different object that does:
+    #+begin_src python
+      >>> f = open('script2.py')
+      >>> iter(f) is f
+      True
+      >>> iter(f) is f.__iter__()
+      True
+      >>> f.__next__()
+      'import sys\n'
+    #+end_src
+
+    通常来说, 需要使用 ~iter()~ 方法获取到可迭代对象(~iterable~)的迭代器(~iterator~), 再调用该迭代器的 ~__next__~ 方法来获取下一个结果.
+    
+    但是file比较特殊, 它的迭代器就是自身. 因为file无法迭代多次, 所以简化了处理.
+
+    #+begin_src python
+      In [146]: L
+      Out[146]: [1, 2, 3]
+
+      In [149]: l = iter(L)
+
+      In [150]: i = iter(L)
+    #+end_src
+
+    上面的示例中, l和i都是L的迭代器, L称之为可迭代对象
+
+
+*** MANUAL ITERATION
+    #+begin_src python
+      >>> L = [1, 2, 3]
+      >>>
+      >>> for X in L:                 # Automatic iteration
+      ...     print(X ** 2, end=' ')  # Obtains iter, calls __next__, catches exceptions
+      ...
+      1 4 9
+
+      >>> I = iter(L)                 # Manual iteration: what for loops usually do
+      >>> while True:
+      ...     try:                    # try statement catches exceptions
+      ...         X = next(I)         # Or call I.__next__ in 3.X
+      ...     except StopIteration:
+      ...         break
+      ...     print(X ** 2, end=' ')
+      ...
+      1 4 9
+    #+end_src
+
+*** Other Built-in Type Iterables
+
+    #+begin_src python
+      In [2]: L = [1, 2, 3, 4]
+
+      In [3]: S = "swamp"
+
+      In [4]: D = {k:v for k, v in zip(L, S)}
+
+      In [5]: D
+      Out[5]: {1: 's', 2: 'w', 3: 'a', 4: 'm'}
+
+      In [6]: for key in D:
+	 ...:     print(key, D[key])
+	 ...:
+      1 s
+      2 w
+      3 a
+      4 m
+    #+end_src
+
+** List Comprehensions: A First Detailed Look
+*** Using List Comprehensions on Files
+
+    #+begin_src python
+      >>> lines = [line.rstrip() for line in open('script2.py')]
+      >>> lines
+      ['import sys', 'print(sys.path)', 'x = 2', 'print(x ** 32)']
+    #+end_src
+*** Extended List Comprehension Syntax
+**** FILTER CLAUSES: IF
+     #+begin_src python
+       >>> lines = [line.rstrip() for line in open('script2.py') if line[0] == 'p']
+       >>> lines
+       ['print(sys.path)', 'print(x ** 32)']
+     #+end_src
+**** NESTED LOOPS: FOR
+     #+begin_src python
+       >>> [x + y for x in 'abc' for y in 'lmn']
+       ['al', 'am', 'an', 'bl', 'bm', 'bn', 'cl', 'cm', 'cn']
+     #+end_src
+** Other Iteration Contexts
+   #+begin_src python
+     >>> uppers = [line.upper() for line in open('script2.py')]
+     >>> uppers
+     ['IMPORT SYS\n', 'PRINT(SYS.PATH)\n', 'X = 2\n', 'PRINT(X ** 32)\n']
+
+     >>> map(str.upper, open('script2.py'))      # map is itself an iterable in 3.X
+     <map object at 0x00000000029476D8>
+     >>> list(map(str.upper, open('script2.py')))
+     ['IMPORT SYS\n', 'PRINT(SYS.PATH)\n', 'X = 2\n', 'PRINT(X ** 32)\n']
+   #+end_src
+   
+   ~map~ 也是个可迭代对象, 可以生成迭代
+*** Multiple Versus Single Pass Iterators
+
+    It’s important to see how the range object differs from the built-ins described in this section—it supports len and indexing, it is not its own iterator (you make one with iter when iterating manually), and it supports multiple iterators over its result that remember their positions independently:
+
+    #+begin_src python
+      >>> R = range(3)                           # range allows multiple iterators
+      >>> next(R)
+      TypeError: range object is not an iterator
+
+      >>> I1 = iter(R)
+      >>> next(I1)
+      0
+      >>> next(I1)
+      1
+      >>> I2 = iter(R)                           # Two iterators on one range
+      >>> next(I2)
+      0
+      >>> next(I1)                               # I1 is at a different spot than I2
+      2
+    #+end_src
+
+    ~zip~, ~map~, ~filer~ 不支持多轮迭代, 因为他们的 ~iter~ 就是他们自身:
+    #+begin_src python
+      In [13]: Z = zip(D, S)
+
+      In [14]: type(Z)
+      Out[14]: zip
+
+      In [15]: i = iter(Z)
+
+      In [16]: i is Z
+      Out[16]: True
+
+      In [17]: j = iter(Z)
+
+      In [18]: i is j
+      Out[18]: True
+    #+end_src
+*** Dictionary View Iterables
+    #+begin_src python
+      >>> D = dict(a=1, b=2, c=3)
+      >>> D
+      {'a': 1, 'b': 2, 'c': 3}
+
+      >>> K = D.keys()                              # A view object in 3.X, not a list
+      >>> K
+      dict_keys(['a', 'b', 'c'])
+
+      >>> next(K)                                   # Views are not iterators themselves
+      TypeError: dict_keys object is not an iterator
+
+      >>> I = iter(K)                               # View iterables have an iterator,
+      >>> next(I)                                   # which can be used manually,
+      'a'                                           # but does not support len(), index
+      >>> next(I)
+      'b'
+
+      >>> for k in D.keys(): print(k, end=' ')      # All iteration contexts use auto
+      ...
+      a b c
+    #+end_src
+* Chapter 15. The Documentation Interlude
+  Table 15-1. Python documentation sources
+  | Form                     | Role                                       |
+  | # comments               | In-file documentation                      |
+  | The dir function         | Lists of attributes available in objects   |
+  | Docstrings: ~__doc__~    | In-file documentation attached to objects  |
+  | PyDoc: the help function | Interactive help for objects               |
+  | PyDoc: HTML reports      | Module documentation in a browser          |
+  | Sphinx third-party tool  | Richer documentation for larger projects   |
+  | The standard manual set  | Official language and library descriptions |
+  | Web resources            | Online tutorials, examples, and so on      |
+  | Published books          | Commercially polished reference texts      |
+
+** Docstrings: ~__doc__~
+
+*** USER-DEFINED DOCSTRINGS
+    #+begin_src python
+      """
+      Module documentation
+      Words Go Here
+      """
+
+      spam = 40
+
+      def square(x):
+	  """
+	  function documentation
+	  can we have your liver then?
+	  """
+	  return x ** 2          # square
+
+      class Employee:
+	  "class documentation"
+	  pass
+
+      print(square(4))
+      print(square.__doc__)
+    #+end_src
+
+    #+begin_src python
+      >>> import docstrings
+      16
+
+	  function documentation
+	  can we have your liver then?
+
+      >>> print(docstrings.__doc__)
+
+      Module documentation
+      Words Go Here
+
+      >>> print(docstrings.square.__doc__)
+
+	  function documentation
+	  can we have your liver then?
+
+      >>> print(docstrings.Employee.__doc__)
+	  class documentation
+    #+end_src
+
+*** DOCSTRING STANDARDS AND PRIORITIES
+    简单说就是想怎么写就怎么写...
+
+*** BUILT-IN DOCSTRINGS
+    #+begin_src python
+      >>> import sys
+      >>> print(sys.__doc__)
+      This module provides access to some objects used or maintained by the
+      interpreter and to functions that interact strongly with the interpreter.
+
+      Dynamic objects:
+
+      argv -- command line arguments; argv[0] is the script pathname if known
+      path -- module search path; path[0] is the script directory, else ''
+      modules -- dictionary of loaded modules
+      ...more text omitted...
+    #+end_src
+
+    #+begin_src python
+      >>> print(sys.getrefcount.__doc__)
+      getrefcount(object) -> integer
+
+      Return the reference count of object.  The count returned is generally
+      one higher than you might expect, because it includes the (temporary)
+      reference as an argument to getrefcount().
+    #+end_src
+
+    除了module, functions, classes, methods都有其 ~__doc__~
+    
+    
+*** PyDoc: The help Function
+    就是 ~help~
+
+*** PyDoc: HTML Reports
+    #+begin_example
+       python3.8  linc@pop-os  ~/python  pydoc -b
+      Server ready at http://localhost:39025/
+      Server commands: [b]rowser, [q]uit
+      server>
+    #+end_example
+* Chapter 16. Function Basics
+  Table 16-1. Function-related statements and expressions
+  | Statement or expression | Examples                                                                 |
+  | Call expressions        | myfunc('spam', 'eggs', meat=ham, *rest)                                  |
+  | def                     | def printer(message):     print('Hello ' + message) return               |
+  |                         | def adder(a, b=1, *c):     return a + b + c[0]                           |
+  | global                  | x = 'old' def changer():     global x; x = 'new'                         |
+  | nonlocal (3.X)          | def outer():    x = 'old'    def changer():        nonlocal x; x = 'new' |
+  | yield                   | def squares(x):    for i in range(x): yield i ** 2                       |
+  | lambda                  | funcs = [lambda x: x**2, lambda x: x**3]                                 |
+
+  By and large, we code to object interfaces in Python, not data types.
+
+  我们为对象的借口编程, 而非对象的数据类型.
+
+** A Second Example: Intersecting Sequences
+
+   
+* Chapter 17. Scopes
+
+** Python Scope Basics
+
+   - Names assigned inside a def can only be seen by the code within that def. You cannot even refer to such names from outside the function.
+
+   - Names assigned inside a def do not clash with variables outside the def, even if the same names are used elsewhere. A name X assigned outside a given def (i.e., in a different def or at the top level of a module file) is a completely different variable from a name X assigned inside that def.
+
+   variables may be assigned in three different places, corresponding to three different scopes:
+
+   - If a variable is assigned inside a def, it is local to that function.
+
+   - If a variable is assigned in an enclosing def, it is nonlocal to nested functions.
+
+   - If a variable is assigned outside all defs, it is global to the entire file.
+
+*** Name Resolution: The LEGB Rule
+    Within a def statement:
+
+    - Name assignments create or change local names by default.
+
+    - Name references search at most four scopes: local, then enclosing functions (if any), then global, then built-in.
+
+    - Names declared in global and nonlocal statements map assigned names to enclosing module and function scopes, respectively.
+
+    Python’s name-resolution scheme is sometimes called the LEGB rule, after the scope names:
+
+    - When you use an unqualified name inside a function, Python searches up to four scopes—the local (L) scope, then the local scopes of any enclosing (E) defs and lambdas, then the global (G) scope, and then the built-in (B) scope—and stops at the first place the name is found. If the name is not found during this search, Python reports an error.
+
+    - When you assign a name in a function (instead of just referring to it in an expression), Python always creates or changes the name in the local scope, unless it’s declared to be global or nonlocal in that function.
+
+    - When you assign a name outside any function (i.e., at the top level of a module file, or at the interactive prompt), the local scope is the same as the global scope—the module’s namespace.
+
+** The global Statement
+** Scopes and Nested Functions
+** Why nonlocal? State Retention Options
+*** State with nonlocal: 3.X only
+    #+begin_src python
+      >>> def tester(start):
+	      state = start                  # Each call gets its own state
+	      def nested(label):
+		  nonlocal state             # Remembers state in enclosing scope
+		  print(label, state)
+		  state += 1                 # Allowed to change it if nonlocal
+	      return nested
+
+      >>> F = tester(0)
+      >>> F('spam')                          # State visible within closure only
+      spam 0
+      >>> F.state
+      AttributeError: 'function' object has no attribute 'state'
+    #+end_src
+    
+    函数工厂, 生成一个函数, F是一个函数对象(function object), 而 ~stat~ 在不同的函数对象中都有一个副本
+
+*** State with Globals: A Single Copy Only
+    
+    #+begin_src python
+      >>> def tester(start):
+	      global state                   # Move it out to the module to change it
+	      state = start                  # global allows changes in module scope
+	      def nested(label):
+		  global state
+		  print(label, state)
+		  state += 1
+	      return nested
+
+      >>> F = tester(0)
+      >>> F('spam')                          # Each call increments shared global state
+      spam 0
+      >>> F('eggs')
+      eggs 1
+    #+end_src
+
+    #+begin_src python
+      >>> G = tester(42)                     # Resets state's single copy in global scope
+      >>> G('toast')
+      toast 42
+
+      >>> G('bacon')
+      bacon 43
+
+      >>> F('ham')                           # But my counter has been overwritten!
+      ham 44
+    #+end_src
+
+    全局变量, 只有一个对象
+
+*** State with Classes: Explicit Attributes (Preview)
+    
+    #+begin_src python
+      >>> class tester:                          # Class-based alternative (see Part VI)
+	      def __init__(self, start):         # On object construction,
+		  self.state = start             # save state explicitly in new object
+	      def nested(self, label):
+		  print(label, self.state)       # Reference state explicitly
+		  self.state += 1                # Changes are always allowed
+
+      >>> F = tester(0)                          # Create instance, invoke __init__
+      >>> F.nested('spam')                       # F is passed to self
+      spam 0
+      >>> F.nested('ham')
+      ham 1
+    #+end_src
+
+    Class -> 指明属性(Attribute)
+
+    
+*** State with Function Attributes: 3.X and 2.X
+
+** WHY YOU WILL CARE: CUSTOMIZING OPEN
+   #+begin_src python
+     import builtins
+
+     def makeopen(id):
+	 original = builtins.open
+	 def custom(*pargs, **kargs):
+	     print('Custom open call %r:' % id , pargs, kargs)
+	     return original(*pargs, **kargs)
+	 builtins.open = custom
+   #+end_src
+
+* Chapter 18. Arguments
+
+** Arguments and Shared References
+   
+   参数是对象的共享引用, 因此如果该对象mutable, 则可以在函数中进行修改.
+
+   如果想避免对mutable参数的修改, 要么传一个副本进来, 要么在函数中创建一个副本, 对副本进行操作.
+
+   函数如果有多个返回值, 其实是一个tuple, 在caller处进行unpack.
+
+   
+** 参数匹配
+
+   Table 18-1. Function argument-matching forms
+   | Syntax                  | Location | Interpretation                                                   |
+   | func(value)             | Caller   | Normal argument: matched by position                             |
+   | func(name=value)        | Caller   | Keyword argument: matched by name                                |
+   | func(*iterable)         | Caller   | Pass all objects in iterable as individual positional arguments  |
+   | func(**dict)            | Caller   | Pass all key/value pairs in dict as individual keyword arguments |
+   | def func(name)          | Function | Normal argument: matches any passed value by position or name    |
+   | def func(name=value)    | Function | Default argument value, if not passed in the call                |
+   | def func(*name)         | Function | Matches and collects remaining positional arguments in a tuple   |
+   | def func(**name)        | Function | Matches and collects remaining keyword arguments in a dictionary |
+   | def func(*other, name)  | Function | Arguments that must be passed by keyword only in calls (3.X)     |
+   | def func(*, name=value) |          | Arguments that must be passed by keyword only in calls (3.X)     |
+
+   Beware mutable defaults: As footnoted in the prior chapter, if you code a default to be a mutable object (e.g., def f(a=[])), the same, single mutable object is reused every time the function is later called—even if it is changed in place within the function. The net effect is that the argument’s default retains its value from the prior call, and is not reset to its original value coded in the def header. 
+
+   #+begin_src python
+     In [4]: def f(a=[]):
+	...:     a.append(1);
+	...:     print(a)
+	...:
+
+     In [5]: f()
+     [1]
+
+     In [6]: f()
+     [1, 1]
+
+     In [7]: f()
+     [1, 1, 1]
+   #+end_src
+
+** keyword-only arguments
+
+   keyword-only arguments must be coded before the **args arbitrary keywords form and after the *args arbitrary positional form, when both are present. 
+   
+   强制keyword参数 *必须* 在 ~**~ 之前, 在 ~*~ 之后.
+
+   #+begin_src python
+     >>> def f(a, *b, **d, c=6): print(a, b, c, d)          # Keyword-only before **!
+     SyntaxError: invalid syntax
+
+     >>> def f(a, *b, c=6, **d): print(a, b, c, d)          # Collect args in header
+   #+end_src
+
+   In fact, similar ordering rules hold true in *function calls*: when keyword-only arguments are passed, they must appear before a **args form. The keyword-only argument can be coded either before or after the *args, though, and may be included in **args:
+
+   调用的时候, keyword-only参数必须在 ~**~ 之前出现, 或者是出现在 ~**~ 中.
+
+*** WHY KEYWORD-ONLY ARGUMENTS?
+    
+    So why care about keyword-only arguments? In short, they make it easier to allow a function to accept both any number of positional arguments to be processed, and configuration options passed as keywords. While their use is optional, without keyword-only arguments extra work may be required to provide defaults for such options and to verify that no superfluous keywords were passed.
+    
+    
+
